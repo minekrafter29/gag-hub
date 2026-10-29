@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GrowAGrader — GAG Hub</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#0b0f19; --card:#131c2e; --line:#1e293b; --line2:#334155;
+  --green:#22c55e; --purple:#a855f7; --gold:#eab308;
+  --text:#f9fafb; --muted:#9ca3af; --danger:#ef4444;
+  --r-rare:#38bdf8; --r-legendary:#eab308; --r-mythical:#ec4899; --r-divine:#3b82f6; --r-prismatic:#06b6d4;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background:radial-gradient(1200px 500px at 50% -150px,#16233d 0,var(--bg) 60%) no-repeat,var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(19,28,46,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.user{display:flex;align-items:center;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700}
+.hello{font-size:14px;font-weight:700}
+.sub{font-size:10px;color:var(--muted)}
+.pill{font-size:14px;font-weight:700;color:var(--gold);background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:6px 14px}
+.wrap{max-width:620px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;white-space:nowrap;background:var(--card);border:1px solid var(--line);color:var(--muted);padding:10px 14px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.tab.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 6px 18px rgba(34,197,94,.25)}
+.section{display:none}.section.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.card h3{font-size:16px;margin-bottom:6px}
+.hint{font-size:12px;color:var(--muted);line-height:1.5}
+input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:11px 14px;color:#fff;font-size:14px;outline:none}
+input[type=text]:focus{border-color:var(--purple)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1px solid var(--line2);background:var(--bg);color:var(--muted);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.chip.on{color:#fff;border-color:var(--c,var(--green));background:color-mix(in srgb,var(--c,var(--green)) 22%,var(--bg))}
+.count{font-size:11px;color:var(--muted);margin-bottom:8px}
+.pet{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.pet .n{font-weight:700;font-size:14px}
+.pet .r{font-size:11px;color:var(--c);font-weight:600}
+.pet .v{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap}
+.empty{text-align:center;color:var(--muted);padding:22px;font-size:13px}
+.btn{background:var(--green);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:700;cursor:pointer;transition:.15s;font-size:14px}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.purple{background:var(--purple)}
+.btn.ghost{background:var(--bg);border:1px solid var(--line2);color:var(--muted)}
+.btn.sm{padding:6px 10px;font-size:11px}
+.btn.full{width:100%}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.sides{grid-template-columns:1fr}}
+.side h4{font-size:13px;margin-bottom:8px}
+.row{display:flex;gap:6px;margin-bottom:10px}
+.row .btn{padding:0 14px}
+.slot{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px}
+.slot b{display:block}
+.slot small{color:var(--gold)}
+.x{background:none;border:none;color:var(--danger);font-size:18px;cursor:pointer}
+.total{margin-top:8px;font-size:13px;color:var(--muted)}
+.total b{color:var(--gold);font-size:15px}
+.verdict{text-align:center;padding:16px;border-radius:14px;border:1px solid var(--line2);background:var(--bg)}
+.verdict .big{font-size:20px;font-weight:800;margin-bottom:4px}
+.verdict.fair{border-color:var(--green)}.verdict.fair .big{color:var(--green)}
+.verdict.good{border-color:var(--purple)}.verdict.good .big{color:var(--purple)}
+.verdict.bad{border-color:var(--danger)}.verdict.bad .big{color:var(--danger)}
+.foot{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.5}
+
+/* Колесо */
+.wheel-box{position:relative;width:min(300px,82vw);aspect-ratio:1;margin:8px auto 18px}
+.wheel{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 6px #0b0f19,0 0 0 8px var(--line2),0 0 40px rgba(168,85,247,.25);transition:transform 5.5s cubic-bezier(.12,.62,.08,1)}
+.wheel svg{width:100%;height:100%;display:block}
+.pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:26px solid var(--gold);filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));z-index:3}
+.hub{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#334155,#0b0f19);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;z-index:2}
+.odds{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.odd{display:flex;justify-content:space-between;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.odd b{color:var(--gold)}
+.timer{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px}
+.timer b{color:var(--text);font-variant-numeric:tabular-nums}
+
+/* Кейсы */
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.case{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 10px 12px;text-align:center;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.case::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--c) 28%,transparent),transparent 65%);pointer-events:none}
+.case:hover{border-color:var(--c);transform:translateY(-2px)}
+.case svg{width:84px;height:84px;position:relative}
+.case .cn{font-size:14px;font-weight:700;margin:4px 0}
+.case .cp{font-size:13px;color:var(--gold);font-weight:700}
+.case .ct{font-size:10px;color:var(--muted);margin-top:4px}
+.overlay{position:fixed;inset:0;background:rgba(3,6,12,.9);display:none;align-items:center;justify-content:center;z-index:100;padding:14px;overflow-y:auto}
+.overlay.show{display:flex}
+.sheet{background:var(--card);border:1px solid var(--line2);border-radius:20px;padding:18px;width:100%;max-width:620px;animation:pop .25s ease;margin:auto}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sheet-head h3{font-size:17px}
+.roulette{position:relative;overflow:hidden;height:150px;background:#070b13;border:1px solid var(--line2);border-radius:14px;margin-bottom:14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.roulette::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:var(--gold);box-shadow:0 0 12px var(--gold),0 0 3px #fff;z-index:2}
+.track{display:flex;gap:6px;padding:10px 0;will-change:transform}
+.tile{flex:0 0 104px;height:128px;border-radius:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 30%,#0b0f19),#0b0f19);border:1px solid var(--c);border-bottom:4px solid var(--c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;text-align:center}
+.tile svg{width:52px;height:52px}
+.tile span{font-size:11px;font-weight:700;line-height:1.2}
+.tile small{font-size:9px;color:var(--c);font-weight:700;text-transform:uppercase}
+.tile.win{box-shadow:0 0 0 2px var(--gold),0 0 22px var(--c);transform:scale(1.04)}
+.result{min-height:44px;text-align:center;font-size:15px;font-weight:700;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1f2937;border:1px solid var(--line2);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Коллекция */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.own{position:relative;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 26%,#0b0f19),#0b0f19);border:1px solid var(--c);border-radius:12px;padding:10px 6px;text-align:center}
+.own svg{width:44px;height:44px}
+.own span{display:block;font-size:11px;font-weight:700;margin-top:4px}
+.own small{font-size:9px;color:var(--c);font-weight:700;text-transform:uppercase}
+.own i{position:absolute;top:6px;right:8px;font-style:normal;font-size:11px;font-weight:800;color:var(--gold)}
+.bar{height:8px;border-radius:99px;background:var(--bg);border:1px solid var(--line);overflow:hidden;margin:8px 0 14px}
+.bar div{height:100%;background:linear-gradient(90deg,var(--green),var(--purple));width:0;transition:width .4s}
+
+.qbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--line2);background:var(--card);color:var(--text);font-weight:800;cursor:pointer;flex:0 0 auto}
+.qbtn:hover{border-color:var(--purple);color:var(--purple)}
+.petart{width:132px;height:132px;margin:4px auto 12px;border-radius:24px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 40%,#0b0f19),#0b0f19);border:2px solid var(--c);box-shadow:0 0 28px color-mix(in srgb,var(--c) 45%,transparent)}
+.petart svg{width:72px;height:72px}
+.badge{display:inline-block;font-size:11px;font-weight:800;color:#0b0f19;background:var(--c);border-radius:99px;padding:3px 10px;margin:4px 0 12px}
+.info{text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px;line-height:1.45}
+.info b{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.adm-warn{border-color:#7c2d12;background:#1c1208}
+.row2{display:flex;gap:8px;margin:8px 0}
+.row2 input{flex:1}
+</style>
+</head>
+<body>
+<header>
+  <div class="user">
+    <div class="avatar" id="ini">G</div>
+    <div><div class="hello" id="uname">Игрок</div><div class="sub">Grow a Garden Hub</div></div>
+  </div>
+  <div class="pill">🌸 <span id="bal">0</span> Petals</div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="wheel">🎡 Колесо</button>
+    <button class="tab" data-tab="cases">🎁 Кейсы</button>
+    <button class="tab" data-tab="collection">🌿 Коллекция</button>
+    <button class="tab" data-tab="catalog">🐾 Каталог</button>
+    <button class="tab" data-tab="trade">⚖️ Трейд</button>
+    <button class="tab" data-tab="admin" id="tabAdmin" style="display:none">🛠 Админ</button>
+  </div>
+
+  <!-- Колесо -->
+  <div id="wheel" class="section active">
+    <div class="card">
+      <h3>Ежедневное колесо</h3>
+      <p class="hint">Одно бесплатное вращение раз в 24 часа. Petals можно получить только здесь и потратить на кейсы.</p>
+    </div>
+    <div class="card">
+      <div class="wheel-box">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheelEl"></div>
+        <div class="hub">🌱</div>
+      </div>
+      <div class="timer" id="timer"></div>
+      <button class="btn purple full" id="spinBtn">Крутить колесо</button>
+      <div class="odds" id="wheelOdds"></div>
+    </div>
+  </div>
+
+  <!-- Кейсы -->
+  <div id="cases" class="section">
+    <div class="card">
+      <h3>Кейсы</h3>
+      <p class="hint">Открываются за Petals с колеса. Чем дороже кейс, тем выше шанс на редких питомцев. Шансы показаны в каждом кейсе.</p>
+    </div>
+    <div class="cases" id="casesGrid"></div>
+  </div>
+
+  <!-- Коллекция -->
+  <div id="collection" class="section">
+    <div class="card">
+      <h3>Моя коллекция</h3>
+      <p class="hint" id="colHint"></p>
+      <div class="bar"><div id="colBar"></div></div>
+      <div class="grid" id="colGrid"></div>
+      <div style="text-align:center;margin-top:14px"><button class="btn ghost sm" id="wipe">Сбросить прогресс</button></div>
+    </div>
+  </div>
+
+  <!-- Каталог -->
+  <div id="catalog" class="section">
+    <div class="card">
+      <h3>Каталог питомцев</h3>
+      <p class="hint">Rare и выше. Ищите по имени и фильтруйте по редкости.</p>
+      <div style="margin-top:12px"><input type="text" id="q" placeholder="Поиск питомца..."></div>
+      <div class="chips" id="chips"></div>
+      <div class="count" id="cnt"></div>
+      <div id="list"></div>
+    </div>
+  </div>
+
+  <!-- Трейд -->
+  <div id="trade" class="section">
+    <div class="card">
+      <h3>Калькулятор трейда</h3>
+      <p class="hint">Добавьте питомцев с обеих сторон и посмотрите, насколько обмен равный.</p>
+    </div>
+    <datalist id="names"></datalist>
+    <div class="sides">
+      <div class="card side">
+        <h4>📤 Вы отдаёте</h4>
+        <div class="row"><input type="text" id="in-a" list="names" placeholder="Имя пета"><button class="btn" id="add-a">+</button></div>
+        <div id="a"></div><div class="total">Итого: <b id="ta">0</b></div>
+      </div>
+      <div class="card side">
+        <h4>📥 Вы получаете</h4>
+        <div class="row"><input type="text" id="in-b" list="names" placeholder="Имя пета"><button class="btn" id="add-b">+</button></div>
+        <div id="b"></div><div class="total">Итого: <b id="tb">0</b></div>
+      </div>
+    </div>
+    <div class="verdict" id="verdict"><div class="big">—</div><div class="hint">Добавьте питомцев с обеих сторон</div></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn ghost sm" id="reset">Сбросить</button></div>
+  </div>
+
+  <div id="admin" class="section">
+    <div class="card">
+      <h3>🛠 Панель администратора</h3>
+      <p class="hint">Видна только аккаунту администратора. Настоящая проверка прав выполняется в боте по Telegram ID, эта вкладка лишь удобный пульт.</p>
+    </div>
+    <div class="card">
+      <h3>Выдать себе Petals</h3>
+      <p class="hint">Только на этом устройстве, для проверки кейсов.</p>
+      <div class="row2"><input type="text" id="admSelfAmt" inputmode="numeric" placeholder="Количество, например 500"><button class="btn" id="admSelfBtn">Выдать</button></div>
+    </div>
+    <div class="card">
+      <h3>Подарить игроку</h3>
+      <p class="hint">Игрок должен хотя бы раз запустить бота. Бот пришлёт ему сообщение с кнопкой, и Petals зачислятся при открытии приложения.</p>
+      <div class="row2"><input type="text" id="admUser" placeholder="@username игрока"></div>
+      <div class="row2"><input type="text" id="admAmt" inputmode="numeric" placeholder="Количество (до 10 000)"><button class="btn purple" id="admGiftBtn">Отправить</button></div>
+    </div>
+    <div class="card adm-warn">
+      <p class="hint">Petals и питомцы остаются внутри приложения. Продажа или обмен Petals на деньги, Robux или питомцев превращает приложение в азартную игру на реальные ценности, поэтому этого делать нельзя.</p>
+    </div>
+  </div>
+
+  <p class="foot">Petals и питомцы в колесе, кейсах и коллекции существуют только внутри этого приложения: их нельзя купить, обменять или вывести в игру. Цены в каталоге — оценка приложения, а не официальные значения игры.</p>
+</div>
+
+<!-- Админ -->
+<div class="overlay" id="petOv">
+  <div class="sheet" style="max-width:380px;text-align:center">
+    <div id="petBody"></div>
+    <button class="btn full" id="petOk" style="margin-top:6px">Закрыть</button>
+  </div>
+</div>
+
+<!-- Кейс-оверлей -->
+<div class="overlay" id="caseOv">
+  <div class="sheet">
+    <div class="sheet-head"><h3 id="cvTitle"></h3><button class="btn ghost sm" id="cvClose">Закрыть</button></div>
+    <div class="roulette" id="roulette"><div class="track" id="track"></div></div>
+    <div class="result" id="cvResult"></div>
+    <button class="btn purple full" id="cvOpen"></button>
+    <div class="odds" id="cvOdds" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- Результат колеса -->
+<div class="overlay" id="resOv">
+  <div class="sheet" style="max-width:340px;text-align:center">
+    <h3 id="resTitle" style="margin-bottom:8px"></h3>
+    <div id="resIcon" style="margin:10px auto;width:84px;height:84px"></div>
+    <p id="resText" style="font-size:16px;font-weight:700;margin-bottom:16px"></p>
+    <button class="btn full" id="resOk">Отлично</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PETS = {"rare": [{"name": "Tree Frog", "rarity": "Rare", "class": "rarity-rare", "value": "450 Petals"}, {"name": "Rooster", "rarity": "Rare", "class": "rarity-rare", "value": "500 Petals"}, {"name": "Christmas Gorilla", "rarity": "Rare", "class": "rarity-rare", "value": "550 Petals"}, {"name": "Hummingbird", "rarity": "Rare", "class": "rarity-rare", "value": "550 Petals"}, {"name": "Armadillo", "rarity": "Rare", "class": "rarity-rare", "value": "600 Petals"}, {"name": "Orangutan", "rarity": "Rare", "class": "rarity-rare", "value": "700 Petals"}, {"name": "Chubby Chipmunk", "rarity": "Rare", "class": "rarity-rare", "value": "750 Petals"}, {"name": "Smithing Dog", "rarity": "Rare", "class": "rarity-rare", "value": "850 Petals"}, {"name": "Sea Turtle", "rarity": "Rare", "class": "rarity-rare", "value": "900 Petals"}, {"name": "Turtle Dove", "rarity": "Rare", "class": "rarity-rare", "value": "950 Petals"}, {"name": "Wasp", "rarity": "Rare", "class": "rarity-rare", "value": "1000 Petals"}, {"name": "Woodpecker", "rarity": "Rare", "class": "rarity-rare", "value": "1000 Petals"}, {"name": "Messenger Pigeon", "rarity": "Rare", "class": "rarity-rare", "value": "1050 Petals"}, {"name": "Snowman Soldier", "rarity": "Rare", "class": "rarity-rare", "value": "1050 Petals"}, {"name": "Badger", "rarity": "Rare", "class": "rarity-rare", "value": "1150 Petals"}, {"name": "Bone Dog", "rarity": "Rare", "class": "rarity-rare", "value": "1150 Petals"}, {"name": "Firemite", "rarity": "Rare", "class": "rarity-rare", "value": "1200 Petals"}, {"name": "Flamingo", "rarity": "Rare", "class": "rarity-rare", "value": "1200 Petals"}, {"name": "Hedgehog", "rarity": "Rare", "class": "rarity-rare", "value": "1200 Petals"}, {"name": "Seal", "rarity": "Rare", "class": "rarity-rare", "value": "1200 Petals"}, {"name": "Goblin", "rarity": "Rare", "class": "rarity-rare", "value": "1250 Petals"}, {"name": "Pancake Mole", "rarity": "Rare", "class": "rarity-rare", "value": "1250 Petals"}, {"name": "Toucan", "rarity": "Rare", "class": "rarity-rare", "value": "1250 Petals"}, {"name": "Zebra", "rarity": "Rare", "class": "rarity-rare", "value": "1250 Petals"}, {"name": "Easter Egg Chick", "rarity": "Rare", "class": "rarity-rare", "value": "1300 Petals"}, {"name": "Honey Bee", "rarity": "Rare", "class": "rarity-rare", "value": "1300 Petals"}, {"name": "Orange Tabby", "rarity": "Rare", "class": "rarity-rare", "value": "1400 Petals"}, {"name": "Geode Turtle", "rarity": "Rare", "class": "rarity-rare", "value": "1500 Petals"}, {"name": "Gift Rat", "rarity": "Rare", "class": "rarity-rare", "value": "1500 Petals"}, {"name": "Firework Sprite", "rarity": "Rare", "class": "rarity-rare", "value": "1550 Petals"}, {"name": "Ghost Bear", "rarity": "Rare", "class": "rarity-rare", "value": "1550 Petals"}, {"name": "Kiwi", "rarity": "Rare", "class": "rarity-rare", "value": "1600 Petals"}, {"name": "Monkey", "rarity": "Rare", "class": "rarity-rare", "value": "1600 Petals"}, {"name": "Pig", "rarity": "Rare", "class": "rarity-rare", "value": "1600 Petals"}, {"name": "Cape Buffalo", "rarity": "Rare", "class": "rarity-rare", "value": "1650 Petals"}, {"name": "Spotted Deer", "rarity": "Rare", "class": "rarity-rare", "value": "1700 Petals"}, {"name": "Partridge", "rarity": "Rare", "class": "rarity-rare", "value": "1850 Petals"}, {"name": "Pixie", "rarity": "Rare", "class": "rarity-rare", "value": "1850 Petals"}, {"name": "Red Squirrel", "rarity": "Rare", "class": "rarity-rare", "value": "1850 Petals"}, {"name": "Nihonzaru", "rarity": "Rare", "class": "rarity-rare", "value": "2250 Petals"}, {"name": "Topaz Snail", "rarity": "Rare", "class": "rarity-rare", "value": "2300 Petals"}, {"name": "Tsuchinoko", "rarity": "Rare", "class": "rarity-rare", "value": "2300 Petals"}, {"name": "Performer Seal", "rarity": "Rare", "class": "rarity-rare", "value": "2850 Petals"}], "legendary": [{"name": "Wisp", "rarity": "Legendary", "class": "rarity-legendary", "value": "3000 Petals"}, {"name": "Turtle", "rarity": "Legendary", "class": "rarity-legendary", "value": "3100 Petals"}, {"name": "Cow", "rarity": "Legendary", "class": "rarity-legendary", "value": "3150 Petals"}, {"name": "Moth", "rarity": "Legendary", "class": "rarity-legendary", "value": "3200 Petals"}, {"name": "German Shepherd", "rarity": "Legendary", "class": "rarity-legendary", "value": "3600 Petals"}, {"name": "Silver Dragonfly", "rarity": "Legendary", "class": "rarity-legendary", "value": "3600 Petals"}, {"name": "Tarantula Hawk", "rarity": "Legendary", "class": "rarity-legendary", "value": "3600 Petals"}, {"name": "Ash Raven", "rarity": "Legendary", "class": "rarity-legendary", "value": "3700 Petals"}, {"name": "Emerald Snake", "rarity": "Legendary", "class": "rarity-legendary", "value": "3750 Petals"}, {"name": "Cuckoo", "rarity": "Legendary", "class": "rarity-legendary", "value": "4350 Petals"}, {"name": "Grey Mouse", "rarity": "Legendary", "class": "rarity-legendary", "value": "4350 Petals"}, {"name": "Capybara", "rarity": "Legendary", "class": "rarity-legendary", "value": "4550 Petals"}, {"name": "Pine Beetle", "rarity": "Legendary", "class": "rarity-legendary", "value": "4550 Petals"}, {"name": "Magpie", "rarity": "Legendary", "class": "rarity-legendary", "value": "4850 Petals"}, {"name": "Seedling", "rarity": "Legendary", "class": "rarity-legendary", "value": "4900 Petals"}, {"name": "Football", "rarity": "Legendary", "class": "rarity-legendary", "value": "5250 Petals"}, {"name": "Sushi Bear", "rarity": "Legendary", "class": "rarity-legendary", "value": "5400 Petals"}, {"name": "Trapdoor Spider", "rarity": "Legendary", "class": "rarity-legendary", "value": "5450 Petals"}, {"name": "Celebration Puppy", "rarity": "Legendary", "class": "rarity-legendary", "value": "5500 Petals"}, {"name": "Snowman Builder", "rarity": "Legendary", "class": "rarity-legendary", "value": "5700 Petals"}, {"name": "Hippo", "rarity": "Legendary", "class": "rarity-legendary", "value": "5750 Petals"}, {"name": "Marmot", "rarity": "Legendary", "class": "rarity-legendary", "value": "5850 Petals"}, {"name": "Stork", "rarity": "Legendary", "class": "rarity-legendary", "value": "5850 Petals"}, {"name": "Cheetah", "rarity": "Legendary", "class": "rarity-legendary", "value": "5900 Petals"}, {"name": "Pink Panda", "rarity": "Legendary", "class": "rarity-legendary", "value": "5900 Petals"}, {"name": "Peacock", "rarity": "Legendary", "class": "rarity-legendary", "value": "5950 Petals"}, {"name": "Amethyst Beetle", "rarity": "Legendary", "class": "rarity-legendary", "value": "6000 Petals"}, {"name": "Polar Bear", "rarity": "Legendary", "class": "rarity-legendary", "value": "6050 Petals"}, {"name": "Snail", "rarity": "Legendary", "class": "rarity-legendary", "value": "6100 Petals"}, {"name": "Imp", "rarity": "Legendary", "class": "rarity-legendary", "value": "6350 Petals"}, {"name": "Wolf", "rarity": "Legendary", "class": "rarity-legendary", "value": "6500 Petals"}, {"name": "Blood Hedgehog", "rarity": "Legendary", "class": "rarity-legendary", "value": "6600 Petals"}, {"name": "Giraffe", "rarity": "Legendary", "class": "rarity-legendary", "value": "6750 Petals"}, {"name": "Gummy Bear", "rarity": "Legendary", "class": "rarity-legendary", "value": "6750 Petals"}, {"name": "Ostrich", "rarity": "Legendary", "class": "rarity-legendary", "value": "6950 Petals"}, {"name": "Silver Monkey", "rarity": "Legendary", "class": "rarity-legendary", "value": "7150 Petals"}, {"name": "Fortune Squirrel", "rarity": "Legendary", "class": "rarity-legendary", "value": "7250 Petals"}, {"name": "Tanchozuru", "rarity": "Legendary", "class": "rarity-legendary", "value": "7350 Petals"}, {"name": "Moon Cat", "rarity": "Legendary", "class": "rarity-legendary", "value": "7400 Petals"}, {"name": "Bear on Bike", "rarity": "Legendary", "class": "rarity-legendary", "value": "7500 Petals"}, {"name": "Tomb Marmot", "rarity": "Legendary", "class": "rarity-legendary", "value": "7500 Petals"}, {"name": "Mole", "rarity": "Legendary", "class": "rarity-legendary", "value": "7650 Petals"}, {"name": "Silver Piggy", "rarity": "Legendary", "class": "rarity-legendary", "value": "7700 Petals"}, {"name": "Mallard", "rarity": "Legendary", "class": "rarity-legendary", "value": "7800 Petals"}, {"name": "Reindeer", "rarity": "Legendary", "class": "rarity-legendary", "value": "7850 Petals"}, {"name": "Sea Otter", "rarity": "Legendary", "class": "rarity-legendary", "value": "8000 Petals"}, {"name": "Marshmallow Lamb", "rarity": "Legendary", "class": "rarity-legendary", "value": "8300 Petals"}, {"name": "Scarlet Macaw", "rarity": "Legendary", "class": "rarity-legendary", "value": "8450 Petals"}, {"name": "Calico", "rarity": "Legendary", "class": "rarity-legendary", "value": "8500 Petals"}, {"name": "Shroomie", "rarity": "Legendary", "class": "rarity-legendary", "value": "8500 Petals"}, {"name": "Champion Beetle", "rarity": "Legendary", "class": "rarity-legendary", "value": "8550 Petals"}, {"name": "Petal Bee", "rarity": "Legendary", "class": "rarity-legendary", "value": "8550 Petals"}, {"name": "Idol Chipmunk", "rarity": "Legendary", "class": "rarity-legendary", "value": "8600 Petals"}, {"name": "Spider", "rarity": "Legendary", "class": "rarity-legendary", "value": "8800 Petals"}, {"name": "Stag Beetle", "rarity": "Legendary", "class": "rarity-legendary", "value": "8800 Petals"}, {"name": "Iguana", "rarity": "Legendary", "class": "rarity-legendary", "value": "8900 Petals"}, {"name": "Meerkat", "rarity": "Legendary", "class": "rarity-legendary", "value": "8950 Petals"}, {"name": "Triceratops", "rarity": "Legendary", "class": "rarity-legendary", "value": "9100 Petals"}, {"name": "Panda", "rarity": "Legendary", "class": "rarity-legendary", "value": "9200 Petals"}, {"name": "Gnome", "rarity": "Legendary", "class": "rarity-legendary", "value": "9300 Petals"}, {"name": "Hotdog Daschund", "rarity": "Legendary", "class": "rarity-legendary", "value": "9300 Petals"}, {"name": "Gorilla Chef", "rarity": "Legendary", "class": "rarity-legendary", "value": "9450 Petals"}, {"name": "Blood Kiwi", "rarity": "Legendary", "class": "rarity-legendary", "value": "9500 Petals"}, {"name": "Mandrake", "rarity": "Legendary", "class": "rarity-legendary", "value": "9600 Petals"}, {"name": "Tanuki", "rarity": "Legendary", "class": "rarity-legendary", "value": "9600 Petals"}, {"name": "Bald Eagle", "rarity": "Legendary", "class": "rarity-legendary", "value": "9650 Petals"}, {"name": "Corrupted Kodama", "rarity": "Legendary", "class": "rarity-legendary", "value": "9750 Petals"}, {"name": "Parasaurolophus", "rarity": "Legendary", "class": "rarity-legendary", "value": "9800 Petals"}, {"name": "Iguanodon", "rarity": "Legendary", "class": "rarity-legendary", "value": "10000 Petals"}, {"name": "Sand Snake", "rarity": "Legendary", "class": "rarity-legendary", "value": "10000 Petals"}, {"name": "Pachycephalosaurus", "rarity": "Legendary", "class": "rarity-legendary", "value": "10500 Petals"}, {"name": "Kodama", "rarity": "Legendary", "class": "rarity-legendary", "value": "11000 Petals"}, {"name": "Raptor", "rarity": "Legendary", "class": "rarity-legendary", "value": "12500 Petals"}, {"name": "Stegosaurus", "rarity": "Legendary", "class": "rarity-legendary", "value": "13000 Petals"}, {"name": "Frog", "rarity": "Legendary", "class": "rarity-legendary", "value": "13500 Petals"}, {"name": "Grizzly Bear", "rarity": "Legendary", "class": "rarity-legendary", "value": "13500 Petals"}, {"name": "Woody", "rarity": "Legendary", "class": "rarity-legendary", "value": "13500 Petals"}], "mythical": [{"name": "Golem", "rarity": "Mythical", "class": "rarity-mythical", "value": "15500 Petals"}, {"name": "Hootsie Roll", "rarity": "Mythical", "class": "rarity-mythical", "value": "16500 Petals"}, {"name": "Sapphire Macaw", "rarity": "Mythical", "class": "rarity-mythical", "value": "16500 Petals"}, {"name": "Cocoa Cat", "rarity": "Mythical", "class": "rarity-mythical", "value": "19000 Petals"}, {"name": "Brown Mouse", "rarity": "Mythical", "class": "rarity-mythical", "value": "19500 Petals"}, {"name": "Sugar Glider", "rarity": "Mythical", "class": "rarity-mythical", "value": "20500 Petals"}, {"name": "Golden Piggy", "rarity": "Mythical", "class": "rarity-mythical", "value": "21000 Petals"}, {"name": "Red Giant Ant", "rarity": "Mythical", "class": "rarity-mythical", "value": "21000 Petals"}, {"name": "Arctic Fox", "rarity": "Mythical", "class": "rarity-mythical", "value": "22500 Petals"}, {"name": "Glimmering Sprite", "rarity": "Mythical", "class": "rarity-mythical", "value": "24000 Petals"}, {"name": "Mimic Octopus", "rarity": "Mythical", "class": "rarity-mythical", "value": "24000 Petals"}, {"name": "Brown Owl", "rarity": "Mythical", "class": "rarity-mythical", "value": "24500 Petals"}, {"name": "Koi", "rarity": "Mythical", "class": "rarity-mythical", "value": "25000 Petals"}, {"name": "Mantis Shrimp", "rarity": "Mythical", "class": "rarity-mythical", "value": "25000 Petals"}, {"name": "Mistletoad", "rarity": "Mythical", "class": "rarity-mythical", "value": "25000 Petals"}, {"name": "Junkbot", "rarity": "Mythical", "class": "rarity-mythical", "value": "25500 Petals"}, {"name": "Goblin Gardener", "rarity": "Mythical", "class": "rarity-mythical", "value": "27500 Petals"}, {"name": "Pterodactyl", "rarity": "Mythical", "class": "rarity-mythical", "value": "27500 Petals"}, {"name": "Ankylosaurus", "rarity": "Mythical", "class": "rarity-mythical", "value": "28000 Petals"}, {"name": "Echo Frog", "rarity": "Mythical", "class": "rarity-mythical", "value": "28000 Petals"}, {"name": "Pack Mule", "rarity": "Mythical", "class": "rarity-mythical", "value": "28000 Petals"}, {"name": "Hamster", "rarity": "Mythical", "class": "rarity-mythical", "value": "29000 Petals"}, {"name": "Mochi Mouse", "rarity": "Mythical", "class": "rarity-mythical", "value": "30000 Petals"}, {"name": "Pack Bee", "rarity": "Mythical", "class": "rarity-mythical", "value": "30500 Petals"}, {"name": "Owl", "rarity": "Mythical", "class": "rarity-mythical", "value": "31500 Petals"}, {"name": "Show Pony", "rarity": "Mythical", "class": "rarity-mythical", "value": "31500 Petals"}, {"name": "Butterfly", "rarity": "Mythical", "class": "rarity-mythical", "value": "32500 Petals"}, {"name": "Crocodile", "rarity": "Mythical", "class": "rarity-mythical", "value": "32500 Petals"}, {"name": "Penguin", "rarity": "Mythical", "class": "rarity-mythical", "value": "33000 Petals"}, {"name": "Cooked Owl", "rarity": "Mythical", "class": "rarity-mythical", "value": "34500 Petals"}, {"name": "Black Cat", "rarity": "Mythical", "class": "rarity-mythical", "value": "35000 Petals"}, {"name": "Eggnog Chick", "rarity": "Mythical", "class": "rarity-mythical", "value": "35000 Petals"}, {"name": "Praying Mantis", "rarity": "Mythical", "class": "rarity-mythical", "value": "35500 Petals"}, {"name": "Chimpanzee", "rarity": "Mythical", "class": "rarity-mythical", "value": "36500 Petals"}, {"name": "Summer Kiwi", "rarity": "Mythical", "class": "rarity-mythical", "value": "36500 Petals"}, {"name": "Barn Owl", "rarity": "Mythical", "class": "rarity-mythical", "value": "37500 Petals"}, {"name": "Squirrel", "rarity": "Mythical", "class": "rarity-mythical", "value": "37500 Petals"}, {"name": "Galah Cockatoo", "rarity": "Mythical", "class": "rarity-mythical", "value": "38500 Petals"}, {"name": "Goblin Miner", "rarity": "Mythical", "class": "rarity-mythical", "value": "39000 Petals"}, {"name": "Nutcracker", "rarity": "Mythical", "class": "rarity-mythical", "value": "39000 Petals"}, {"name": "Peach Wasp", "rarity": "Mythical", "class": "rarity-mythical", "value": "40000 Petals"}, {"name": "Hyacinth Macaw", "rarity": "Mythical", "class": "rarity-mythical", "value": "40500 Petals"}, {"name": "Hazehound", "rarity": "Mythical", "class": "rarity-mythical", "value": "41500 Petals"}, {"name": "Giant Ant", "rarity": "Mythical", "class": "rarity-mythical", "value": "42500 Petals"}, {"name": "Rhino", "rarity": "Mythical", "class": "rarity-mythical", "value": "42500 Petals"}, {"name": "Firefly", "rarity": "Mythical", "class": "rarity-mythical", "value": "43000 Petals"}, {"name": "Red Dragon", "rarity": "Mythical", "class": "rarity-mythical", "value": "43000 Petals"}, {"name": "Bear Bee", "rarity": "Mythical", "class": "rarity-mythical", "value": "43500 Petals"}, {"name": "Caterpillar", "rarity": "Mythical", "class": "rarity-mythical", "value": "43500 Petals"}, {"name": "Dark Spriggan", "rarity": "Mythical", "class": "rarity-mythical", "value": "43500 Petals"}, {"name": "New Year's Chimp", "rarity": "Mythical", "class": "rarity-mythical", "value": "43500 Petals"}, {"name": "Spriggan", "rarity": "Mythical", "class": "rarity-mythical", "value": "45500 Petals"}, {"name": "Chicken Zombie", "rarity": "Mythical", "class": "rarity-mythical", "value": "47500 Petals"}, {"name": "Drake", "rarity": "Mythical", "class": "rarity-mythical", "value": "48000 Petals"}, {"name": "Lemon Lion", "rarity": "Mythical", "class": "rarity-mythical", "value": "48500 Petals"}, {"name": "Golden Bee", "rarity": "Mythical", "class": "rarity-mythical", "value": "49000 Petals"}, {"name": "Night Owl", "rarity": "Mythical", "class": "rarity-mythical", "value": "51500 Petals"}, {"name": "Axolotl", "rarity": "Mythical", "class": "rarity-mythical", "value": "54000 Petals"}, {"name": "Brontosaurus", "rarity": "Mythical", "class": "rarity-mythical", "value": "54500 Petals"}, {"name": "Camel", "rarity": "Mythical", "class": "rarity-mythical", "value": "61000 Petals"}, {"name": "Kappa", "rarity": "Mythical", "class": "rarity-mythical", "value": "61000 Petals"}, {"name": "Apple Gazelle", "rarity": "Mythical", "class": "rarity-mythical", "value": "62000 Petals"}, {"name": "Spaghetti Sloth", "rarity": "Mythical", "class": "rarity-mythical", "value": "64500 Petals"}, {"name": "Dilophosaurus", "rarity": "Mythical", "class": "rarity-mythical", "value": "66000 Petals"}], "divine": [{"name": "Swan", "rarity": "Divine", "class": "rarity-divine", "value": "96000 Petals"}, {"name": "Lion", "rarity": "Divine", "class": "rarity-divine", "value": "97500 Petals"}, {"name": "Cockatrice", "rarity": "Divine", "class": "rarity-divine", "value": "105000 Petals"}, {"name": "Ruby Squid", "rarity": "Divine", "class": "rarity-divine", "value": "105000 Petals"}, {"name": "Wind Wyvern", "rarity": "Divine", "class": "rarity-divine", "value": "110000 Petals"}, {"name": "Orchid Mantis", "rarity": "Divine", "class": "rarity-divine", "value": "115000 Petals"}, {"name": "Krampus", "rarity": "Divine", "class": "rarity-divine", "value": "125000 Petals"}, {"name": "Yeti", "rarity": "Divine", "class": "rarity-divine", "value": "125000 Petals"}, {"name": "Frost Dragon", "rarity": "Divine", "class": "rarity-divine", "value": "130000 Petals"}, {"name": "Red-Nosed Reindeer", "rarity": "Divine", "class": "rarity-divine", "value": "130000 Petals"}, {"name": "Disco Bee", "rarity": "Divine", "class": "rarity-divine", "value": "135000 Petals"}, {"name": "Dragonfly", "rarity": "Divine", "class": "rarity-divine", "value": "140000 Petals"}, {"name": "Elephant", "rarity": "Divine", "class": "rarity-divine", "value": "140000 Petals"}, {"name": "Hex Serpent", "rarity": "Divine", "class": "rarity-divine", "value": "140000 Petals"}, {"name": "Fennec Fox", "rarity": "Divine", "class": "rarity-divine", "value": "145000 Petals"}, {"name": "Hydra", "rarity": "Divine", "class": "rarity-divine", "value": "150000 Petals"}, {"name": "Lich", "rarity": "Divine", "class": "rarity-divine", "value": "150000 Petals"}, {"name": "Carnival Elephant", "rarity": "Divine", "class": "rarity-divine", "value": "155000 Petals"}, {"name": "Chimera", "rarity": "Divine", "class": "rarity-divine", "value": "155000 Petals"}, {"name": "Blood Owl", "rarity": "Divine", "class": "rarity-divine", "value": "160000 Petals"}, {"name": "Space Squirrel", "rarity": "Divine", "class": "rarity-divine", "value": "160000 Petals"}, {"name": "Star Wolf", "rarity": "Divine", "class": "rarity-divine", "value": "160000 Petals"}, {"name": "Tiger", "rarity": "Divine", "class": "rarity-divine", "value": "160000 Petals"}, {"name": "Water Buffalo", "rarity": "Divine", "class": "rarity-divine", "value": "160000 Petals"}, {"name": "Red Panda", "rarity": "Divine", "class": "rarity-divine", "value": "175000 Petals"}, {"name": "Golden Goose", "rarity": "Divine", "class": "rarity-divine", "value": "190000 Petals"}, {"name": "Cerberus", "rarity": "Divine", "class": "rarity-divine", "value": "195000 Petals"}, {"name": "Reaper", "rarity": "Divine", "class": "rarity-divine", "value": "195000 Petals"}, {"name": "Diamond Panther", "rarity": "Divine", "class": "rarity-divine", "value": "200000 Petals"}, {"name": "French Fry Ferret", "rarity": "Divine", "class": "rarity-divine", "value": "200000 Petals"}, {"name": "Mizuchi", "rarity": "Divine", "class": "rarity-divine", "value": "200000 Petals"}, {"name": "Mummy", "rarity": "Divine", "class": "rarity-divine", "value": "205000 Petals"}, {"name": "Queen Bee", "rarity": "Divine", "class": "rarity-divine", "value": "205000 Petals"}, {"name": "Red Fox", "rarity": "Divine", "class": "rarity-divine", "value": "205000 Petals"}, {"name": "Chinchilla", "rarity": "Divine", "class": "rarity-divine", "value": "220000 Petals"}, {"name": "Phoenix", "rarity": "Divine", "class": "rarity-divine", "value": "220000 Petals"}, {"name": "Red Rose Fox", "rarity": "Divine", "class": "rarity-divine", "value": "220000 Petals"}, {"name": "Raiju", "rarity": "Divine", "class": "rarity-divine", "value": "225000 Petals"}, {"name": "Green Bean", "rarity": "Divine", "class": "rarity-divine", "value": "245000 Petals"}, {"name": "Spinosaurus", "rarity": "Divine", "class": "rarity-divine", "value": "260000 Petals"}, {"name": "Raccoon", "rarity": "Divine", "class": "rarity-divine", "value": "280000 Petals"}, {"name": "T-Rex", "rarity": "Divine", "class": "rarity-divine", "value": "295000 Petals"}, {"name": "Griffin", "rarity": "Divine", "class": "rarity-divine", "value": "310000 Petals"}, {"name": "Lobster Thermidor", "rarity": "Divine", "class": "rarity-divine", "value": "315000 Petals"}, {"name": "Luminous Sprite", "rarity": "Divine", "class": "rarity-divine", "value": "315000 Petals"}, {"name": "Bearded Dragon", "rarity": "Divine", "class": "rarity-divine", "value": "330000 Petals"}], "prismatic": [{"name": "Gold Finch", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "565000 Petals"}, {"name": "Headless Horseman", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "665000 Petals"}, {"name": "Birb", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "670000 Petals"}, {"name": "New Year's Dragon", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "930000 Petals"}, {"name": "Kitsune", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "970000 Petals"}, {"name": "Ice Golem", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "1095000 Petals"}, {"name": "Corrupted Kitsune", "rarity": "Prismatic", "class": "rarity-prismatic", "value": "1355000 Petals"}]};
+const tg = window.Telegram && window.Telegram.WebApp;
+try { tg && tg.expand(); } catch(e){}
+try {
+  const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+  if (u) { $('uname').textContent = u.first_name || 'Игрок'; $('ini').textContent = (u.first_name||'G')[0].toUpperCase(); }
+} catch(e){}
+function $(id){ return document.getElementById(id); }
+function haptic(kind){ try{ if(!tg||!tg.HapticFeedback) return; kind==='ok'?tg.HapticFeedback.notificationOccurred('success'):tg.HapticFeedback.impactOccurred('light'); }catch(e){} }
+
+/* ===== Настройки (меняйте здесь) ===== */
+const ADMIN_USERNAME = 'minekrafter29';   // без @
+const BOT_USERNAME   = '';                // юзернейм вашего бота без @, например MyGagBot
+const SPIN_COOLDOWN_MS = 24*60*60*1000;
+const WHEEL = [ // w — вес в процентах, сумма = 100
+  {t:'p',  v:10,  w:30, color:'#1e3a5f'},
+  {t:'p',  v:25,  w:28, color:'#27466f'},
+  {t:'pet',r:'rare',      w:8, color:'#38bdf8'},
+  {t:'p',  v:50,  w:18, color:'#1e3a5f'},
+  {t:'pet',r:'legendary', w:3, color:'#eab308'},
+  {t:'p',  v:75,  w:8,  color:'#27466f'},
+  {t:'p',  v:100, w:4,  color:'#1e3a5f'},
+  {t:'pet',r:'mythical',  w:1, color:'#ec4899'},
+];
+const CASES = [ // odds — проценты по редкостям, сумма = 100
+  {id:'sprout', name:'Ростковый кейс',      price:30,  odds:{rare:85, legendary:15},                c:'#38bdf8', c2:'#0369a1'},
+  {id:'garden', name:'Садовый кейс',        price:90,  odds:{rare:45, legendary:45, mythical:10},   c:'#22c55e', c2:'#15803d'},
+  {id:'mythic', name:'Мифический кейс',     price:250, odds:{legendary:50, mythical:42, divine:8},  c:'#ec4899', c2:'#9d174d'},
+  {id:'prism',  name:'Призматический кейс', price:600, odds:{mythical:55, divine:38, prismatic:7},  c:'#06b6d4', c2:'#7c3aed'},
+];
+
+const ORDER = ['rare','legendary','mythical','divine','prismatic'];
+const LABEL = {rare:'Rare',legendary:'Legendary',mythical:'Mythical',divine:'Divine',prismatic:'Prismatic'};
+const HEX   = {rare:'#38bdf8',legendary:'#eab308',mythical:'#ec4899',divine:'#3b82f6',prismatic:'#06b6d4'};
+const COLOR = {rare:'var(--r-rare)',legendary:'var(--r-legendary)',mythical:'var(--r-mythical)',divine:'var(--r-divine)',prismatic:'var(--r-prismatic)'};
+const ALL = [];
+ORDER.forEach(k => (PETS[k]||[]).forEach(p => ALL.push({name:p.name,key:k,rarity:p.rarity,price:parseInt(p.value,10)})));
+const fmt = n => n.toLocaleString('ru-RU');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===== Состояние (хранится в браузере) ===== */
+let state = {petals:0, inv:{}, lastSpin:0, gifts:[]};
+try { const s = JSON.parse(localStorage.getItem('gag_state_v1')||'null'); if (s && typeof s==='object') state = Object.assign(state, s); } catch(e){}
+function save(){ try{ localStorage.setItem('gag_state_v1', JSON.stringify(state)); }catch(e){} }
+function updateBal(){ $('bal').textContent = fmt(state.petals); }
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2000); }
+
+/* ===== Рисунки (собственные SVG) ===== */
+let uid = 0;
+function pawSVG(color){
+  return `<svg viewBox="0 0 64 64" fill="${color}"><ellipse cx="32" cy="43" rx="15" ry="12"/><circle cx="13" cy="29" r="6.5"/><circle cx="25" cy="17" r="7"/><circle cx="39" cy="17" r="7"/><circle cx="51" cy="29" r="6.5"/></svg>`;
+}
+function caseSVG(c1,c2){
+  const g='g'+(++uid);
+  return `<svg viewBox="0 0 96 96"><defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>
+  <ellipse cx="48" cy="87" rx="34" ry="6" fill="rgba(0,0,0,.35)"/>
+  <rect x="14" y="40" width="68" height="44" rx="8" fill="url(#${g})" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+  <path d="M12 42 Q12 18 48 18 Q84 18 84 42 Z" fill="url(#${g})" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+  <rect x="10" y="40" width="76" height="8" rx="3" fill="rgba(0,0,0,.28)"/>
+  <rect x="39" y="37" width="18" height="20" rx="4" fill="#fde68a" stroke="#b45309" stroke-width="1.5"/>
+  <circle cx="48" cy="46" r="3" fill="#92400e"/><rect x="47" y="46" width="2" height="6" fill="#92400e"/>
+  <path d="M76 14l2.2 5.2 5.2 2.2-5.2 2.2L76 29l-2.2-5.4-5.2-2.2 5.2-2.2z" fill="#fff" opacity=".9"/></svg>`;
+}
+
+/* ===== Выбор по шансам ===== */
+function pickWeighted(map){
+  const keys = Object.keys(map); let r = Math.random()*keys.reduce((s,k)=>s+map[k],0);
+  for (const k of keys){ r -= map[k]; if (r < 0) return k; }
+  return keys[keys.length-1];
+}
+const randOf = a => a[Math.floor(Math.random()*a.length)];
+function giveRandomPet(rarity){ const p = randOf(PETS[rarity]); return {name:p.name, key:rarity}; }
+function addPet(name){ state.inv[name] = (state.inv[name]||0) + 1; save(); }
+
+/* ===== Вкладки ===== */
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === b.dataset.tab));
+  if (b.dataset.tab === 'collection') renderCollection();
+}));
+
+/* ===== Результат (модалка) ===== */
+function showResult(title, icon, text){
+  $('resTitle').textContent = title; $('resIcon').innerHTML = icon; $('resText').innerHTML = text;
+  $('resOv').classList.add('show'); haptic('ok');
+}
+$('resOk').addEventListener('click', () => $('resOv').classList.remove('show'));
+
+/* ===== Колесо ===== */
+const SEG = 360 / WHEEL.length;
+function pt(r, deg){ const a = deg*Math.PI/180; return [r*Math.sin(a), -r*Math.cos(a)]; }
+(function buildWheel(){
+  let s = '<svg viewBox="-110 -110 220 220">';
+  WHEEL.forEach((seg,i) => {
+    const [x0,y0] = pt(100, i*SEG), [x1,y1] = pt(100, (i+1)*SEG);
+    s += `<path d="M0 0 L${x0.toFixed(2)} ${y0.toFixed(2)} A100 100 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z" fill="${seg.color}" stroke="#0b0f19" stroke-width="1.5"/>`;
+    const top = seg.t==='p' ? String(seg.v) : LABEL[seg.r];
+    const bot = seg.t==='p' ? 'Petals' : 'питомец';
+    const txt = seg.t==='pet' ? '#0b0f19' : '#fff';
+    s += `<g transform="rotate(${(i*SEG+SEG/2).toFixed(2)})"><text x="0" y="-66" text-anchor="middle" font-size="${seg.t==='p'?15:11}" font-weight="800" fill="${txt}">${top}</text><text x="0" y="-53" text-anchor="middle" font-size="7" font-weight="700" fill="${txt}" opacity=".85">${bot}</text></g>`;
+  });
+  $('wheelEl').innerHTML = s + '</svg>';
+  $('wheelOdds').innerHTML = WHEEL.map(seg => `<div class="odd"><span>${seg.t==='p'?('🌸 '+seg.v+' Petals'):('🐾 '+LABEL[seg.r])}</span><b>${seg.w}%</b></div>`).join('');
+})();
+let wheelRot = 0, wheelBusy = false;
+function updateTimer(){
+  const left = state.lastSpin + SPIN_COOLDOWN_MS - Date.now();
+  const btn = $('spinBtn');
+  if (wheelBusy) return;
+  if (left > 0){
+    const h = Math.floor(left/3600000), m = Math.floor(left%3600000/60000), s = Math.floor(left%60000/1000);
+    $('timer').innerHTML = 'Следующее вращение через <b>' + [h,m,s].map(n=>String(n).padStart(2,'0')).join(':') + '</b>';
+    btn.disabled = true;
+  } else { $('timer').innerHTML = '<b>Вращение доступно!</b>'; btn.disabled = false; }
+}
+setInterval(updateTimer, 1000);
+$('spinBtn').addEventListener('click', () => {
+  if (wheelBusy || Date.now() < state.lastSpin + SPIN_COOLDOWN_MS) return;
+  wheelBusy = true; $('spinBtn').disabled = true;
+  let r = Math.random()*100, idx = WHEEL.length-1;
+  for (let i=0;i<WHEEL.length;i++){ r -= WHEEL[i].w; if (r < 0){ idx = i; break; } }
+  const center = idx*SEG + SEG/2, jitter = (Math.random()-.5)*SEG*.7;
+  wheelRot = Math.ceil(wheelRot/360)*360 + 360*6 - center + jitter;
+  $('wheelEl').style.transform = `rotate(${wheelRot}deg)`;
+  state.lastSpin = Date.now(); save();
+  setTimeout(() => {
+    wheelBusy = false;
+    const seg = WHEEL[idx];
+    if (seg.t === 'p'){
+      state.petals += seg.v; save(); updateBal();
+      showResult('🎡 Колесо остановилось', '<div style="font-size:64px;line-height:84px">🌸</div>', `+${seg.v} Petals`);
+    } else {
+      const pet = giveRandomPet(seg.r); addPet(pet.name);
+      showResult('🎉 Питомец!', pawSVG(HEX[seg.r]), `<span style="color:${HEX[seg.r]}">${esc(pet.name)}</span><br><span class="hint">${LABEL[seg.r]}</span>`);
+    }
+    updateTimer();
+  }, 5700);
+});
+
+/* ===== Кейсы ===== */
+function oddsText(cs){ return ORDER.filter(k=>cs.odds[k]).map(k=>LABEL[k]).join(' · '); }
+$('casesGrid').innerHTML = CASES.map(cs => `<div class="case" data-id="${cs.id}" style="--c:${cs.c}">${caseSVG(cs.c,cs.c2)}<div class="cn">${cs.name}</div><div class="cp">🌸 ${fmt(cs.price)}</div><div class="ct">${oddsText(cs)}</div></div>`).join('');
+$('casesGrid').addEventListener('click', e => { const el = e.target.closest('.case'); if (el) openCaseView(CASES.find(c=>c.id===el.dataset.id)); });
+
+const PITCH = 110, TILE = 104, WIN_IDX = 52, N_TILES = 64, SPIN_MS = 6200;
+let curCase = null, spinning = false;
+function tileHTML(p, extra){ return `<div class="tile ${extra||''}" style="--c:${HEX[p.key]}">${pawSVG(HEX[p.key])}<span>${esc(p.name)}</span><small>${LABEL[p.key]}</small></div>`; }
+function openCaseView(cs){
+  curCase = cs; $('cvTitle').textContent = cs.name; $('cvResult').innerHTML = '';
+  $('cvOpen').textContent = `Открыть за 🌸 ${fmt(cs.price)}`; $('cvOpen').disabled = false;
+  $('cvOdds').innerHTML = ORDER.filter(k=>cs.odds[k]).map(k => `<div class="odd"><span style="color:${HEX[k]};font-weight:700">${LABEL[k]}</span><b>${cs.odds[k]}%</b></div>`).join('');
+  const tr = $('track'); tr.style.transition = 'none'; tr.style.transform = 'translateX(0)';
+  tr.innerHTML = Array.from({length:20}, () => tileHTML(giveRandomPet(pickWeighted(cs.odds)))).join('');
+  $('caseOv').classList.add('show');
+}
+$('cvClose').addEventListener('click', () => { if (!spinning) $('caseOv').classList.remove('show'); });
+$('cvOpen').addEventListener('click', () => {
+  const cs = curCase; if (!cs || spinning) return;
+  if (state.petals < cs.price){ toast('Не хватает Petals. Крутите колесо раз в сутки.'); return; }
+  state.petals -= cs.price; save(); updateBal();
+  const win = giveRandomPet(pickWeighted(cs.odds));
+  const items = Array.from({length:N_TILES}, (_,i) => i===WIN_IDX ? win : giveRandomPet(pickWeighted(cs.odds)));
+  const tr = $('track'); tr.innerHTML = items.map((p,i) => tileHTML(p, i===WIN_IDX?'is-win':'')).join('');
+  const cw = $('roulette').clientWidth;
+  const target = WIN_IDX*PITCH + TILE/2 + (Math.random()*.7-.35)*TILE - cw/2;
+  tr.style.transition = 'none'; tr.style.transform = 'translateX(0)'; void tr.offsetWidth;
+  tr.style.transition = `transform ${SPIN_MS}ms cubic-bezier(.12,.62,.08,1)`;
+  tr.style.transform = `translateX(${-target}px)`;
+  spinning = true; $('cvOpen').disabled = true; $('cvClose').disabled = true; $('cvResult').innerHTML = ''; haptic();
+  setTimeout(() => {
+    spinning = false; $('cvClose').disabled = false; $('cvOpen').disabled = false;
+    $('cvOpen').textContent = `Открыть ещё раз за 🌸 ${fmt(cs.price)}`;
+    addPet(win.name);
+    const w = tr.querySelector('.is-win'); if (w) w.classList.add('win');
+    $('cvResult').innerHTML = `Выпало: <span style="color:${HEX[win.key]}">${esc(win.name)}</span> <span class="hint">(${LABEL[win.key]})</span>`;
+    haptic('ok');
+  }, SPIN_MS + 100);
+});
+
+/* ===== Коллекция ===== */
+function renderCollection(){
+  const owned = ALL.filter(p => state.inv[p.name]);
+  const uniq = new Set(owned.map(p=>p.name)).size;
+  $('colHint').textContent = `Собрано уникальных: ${uniq} из ${new Set(ALL.map(p=>p.name)).size}`;
+  $('colBar').style.width = (uniq / new Set(ALL.map(p=>p.name)).size * 100) + '%';
+  const seen = new Set(), list = [];
+  owned.sort((a,b)=> ORDER.indexOf(b.key)-ORDER.indexOf(a.key)).forEach(p => { if(!seen.has(p.name)){ seen.add(p.name); list.push(p); } });
+  $('colGrid').innerHTML = list.length
+    ? list.map(p => `<div class="own" style="--c:${HEX[p.key]}">${state.inv[p.name]>1?`<i>×${state.inv[p.name]}</i>`:''}${pawSVG(HEX[p.key])}<span>${esc(p.name)}</span><small>${LABEL[p.key]}</small></div>`).join('')
+    : '<div class="empty" style="grid-column:1/-1">Пока пусто. Крутите колесо и открывайте кейсы!</div>';
+}
+$('wipe').addEventListener('click', () => {
+  if (!confirm('Сбросить Petals, коллекцию и таймер колеса?')) return;
+  state = {petals:0, inv:{}, lastSpin:0, gifts:state.gifts||[]}; save(); updateBal(); renderCollection(); updateTimer();
+});
+
+/* ===== Каталог ===== */
+let filter = 'all';
+const chips = $('chips');
+chips.innerHTML = ['all',...ORDER].map(k => `<button class="chip ${k==='all'?'on':''}" data-k="${k}" style="--c:${COLOR[k]||'var(--green)'}">${k==='all'?'Все':LABEL[k]}</button>`).join('');
+chips.addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  filter = b.dataset.k;
+  chips.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b));
+  renderList();
+});
+$('q').addEventListener('input', renderList);
+function renderList(){
+  const q = $('q').value.trim().toLowerCase();
+  const rows = ALL.filter(p => (filter==='all'||p.key===filter) && p.name.toLowerCase().includes(q)).sort((a,b) => b.price - a.price);
+  $('cnt').textContent = 'Найдено: ' + rows.length;
+  $('list').innerHTML = rows.length
+    ? rows.map(p => `<div class="pet" style="--c:${COLOR[p.key]}"><div><div class="n">${esc(p.name)}</div><div class="r">${p.rarity}</div></div><div style="display:flex;align-items:center;gap:10px"><div class="v">${fmt(p.price)}</div><button class="qbtn" data-n="${esc(p.name)}" aria-label="О питомце">?</button></div></div>`).join('')
+    : '<div class="empty">Ничего не найдено</div>';
+}
+
+/* ===== Калькулятор трейда ===== */
+$('names').innerHTML = ALL.map(p => `<option value="${esc(p.name)}">`).join('');
+const side = {a:[], b:[]};
+function find(name){ const n = name.trim().toLowerCase(); return ALL.find(p => p.name.toLowerCase() === n); }
+function addSide(s){
+  const inp = $('in-'+s), p = find(inp.value);
+  if (!p){ inp.style.borderColor = 'var(--danger)'; setTimeout(()=>inp.style.borderColor='',700); return; }
+  side[s].push(p); inp.value = ''; renderTrade();
+}
+['a','b'].forEach(s => {
+  $('add-'+s).addEventListener('click', () => addSide(s));
+  $('in-'+s).addEventListener('keydown', e => { if (e.key==='Enter') addSide(s); });
+  $(s).addEventListener('click', e => { const x = e.target.closest('.x'); if (!x) return; side[s].splice(+x.dataset.i, 1); renderTrade(); });
+});
+$('reset').addEventListener('click', () => { side.a=[]; side.b=[]; renderTrade(); });
+function renderTrade(){
+  const sums = {};
+  ['a','b'].forEach(s => {
+    sums[s] = side[s].reduce((t,p) => t + p.price, 0);
+    $(s).innerHTML = side[s].map((p,i) => `<div class="slot" style="--c:${COLOR[p.key]}"><div><b>${esc(p.name)}</b><small>${fmt(p.price)}</small></div><button class="x" data-i="${i}" aria-label="Убрать">×</button></div>`).join('');
+    $('t'+s).textContent = fmt(sums[s]);
+  });
+  const v = $('verdict');
+  if (!side.a.length || !side.b.length){ v.className = 'verdict'; v.innerHTML = '<div class="big">—</div><div class="hint">Добавьте питомцев с обеих сторон</div>'; return; }
+  const diff = (sums.b - sums.a) / sums.a * 100;
+  if (Math.abs(diff) <= 10){ v.className='verdict fair'; v.innerHTML=`<div class="big">Честный обмен</div><div class="hint">Разница ${diff.toFixed(1)}%</div>`; }
+  else if (diff > 0){ v.className='verdict good'; v.innerHTML=`<div class="big">Выгодно вам</div><div class="hint">Вы получаете на ${diff.toFixed(1)}% больше</div>`; }
+  else { v.className='verdict bad'; v.innerHTML=`<div class="big">Невыгодно</div><div class="hint">Вы получаете на ${Math.abs(diff).toFixed(1)}% меньше</div>`; }
+}
+
+
+/* ===== Информация о питомцах (кнопка «?») ===== */
+// Источник «как получить»: каталог bloxodes.com (апрель 2026), данные могут устареть.
+// NA = сейчас недоступен. Способности: добавляйте сюда вручную, например ABILITY['Dog'] = 'Описание';
+const ABILITY = {};
+const INFO = {};
+`Armadillo|Season Pass (ур. 2), Safari Harvest Event
+Badger|Fall Egg, Fall Market Event
+Bone Dog|Spooky Egg, Halloween Event
+Cape Buffalo|Safari Harvest Event Shop, торговец Safari, Safari Mega Harvest Event
+Christmas Gorilla|Santa's Surprise Present
+Chubby Chipmunk|Chubby Chipmunk Event
+Easter Egg Chick|Golden Egg
+Firemite|Season Pass
+Firework Sprite|New Year's Egg, New Year's Event
+Flamingo|Rare Egg, Rare Summer Egg
+Geode Turtle|Smithing Event
+Ghost Bear|Creepy Critters Shop
+Gift Rat|Santa's Stash Shop
+Goblin|Halloween Event (награды за раскопки)
+Hedgehog|NA
+Honey Bee|Bee Egg, Honey Merchant
+Hummingbird|Jungle Egg
+Kiwi|торговец, Lunar Glow Event
+Messenger Pigeon|Trader Event
+Monkey|Rare Egg
+Nihonzaru|NA
+Orange Tabby|Rare Egg
+Orangutan|Rare Egg
+Pancake Mole|NA
+Partridge|яйца зимнего события
+Performer Seal|NA
+Pig|Rare Egg
+Pixie|Enchanted Egg
+Red Squirrel|NA
+Rooster|Rare Egg
+Sea Turtle|Rare Egg
+Seal|Rare Egg, Summer Merchant
+Smithing Dog|Smithing Event
+Snowman Soldier|Season Pass 3 (ур. 2)
+Spotted Deer|Rare Egg
+Topaz Snail|NA
+Toucan|Rare Egg, Summer Update
+Tree Frog|Jungle Egg
+Tsuchinoko|NA
+Turtle Dove|Christmas Egg, Christmas Harvest Event
+Wasp|Anti Bee Egg, Limited Time Shop
+Woodpecker|Fall Pet Shop, Fall Market Event
+Zebra|Safari Egg, Safari Harvest Event
+Amethyst Beetle|Gem Egg
+Ash Raven|Season Pass
+Bald Eagle|NA
+Bear on Bike|Carnival Egg
+Blood Hedgehog|Blood Moon Shop, Blood Moon Event
+Blood Kiwi|NA
+Calico|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Capybara|Paradise Egg
+Celebration Puppy|New Year's Egg
+Champion Beetle|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Cheetah|крафт в Smithing Event
+Corrupted Kodama|NA
+Cow|Legendary Egg
+Cuckoo|Bird Egg, Hungry Birds Event
+Emerald Snake|Gem Egg
+Football|NA
+Fortune Squirrel|Chubby Chipmunk Event (награда за вес)
+Frog|NA
+German Shepherd|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Giraffe|Safari Egg, Safari Harvest Event
+Gnome|NA
+Gorilla Chef|NA
+Grey Mouse|Mythical Egg
+Grizzly Bear|NA
+Gummy Bear|Easter Event Shop
+Hippo|Safari Shop
+Hotdog Daschund|NA
+Idol Chipmunk|Nutty Chest, Chubby Chipmunk Event
+Iguana|Jungle Egg
+Iguanodon|NA
+Imp|Enchanted Egg, Fairy Event
+Kodama|NA
+Magpie|Gem Chest, Trader Event
+Mallard|Fall Pet Shop
+Mandrake|NA
+Marmot|Fall Pet Shop, Fall Market Event
+Marshmallow Lamb|Golden Egg
+Meerkat|NA
+Mole|NA
+Moon Cat|NA
+Moth|Anti Bee Egg, Bizzy Bee Event
+Ostrich|Paradise Egg
+Pachycephalosaurus|NA
+Panda|NA
+Parasaurolophus|NA
+Peacock|Paradise Egg
+Petal Bee|Bee Egg, Bizzy Bee Event
+Pine Beetle|подарки, Christmas Harvest Event
+Pink Panda|призы Valentine's Event
+Polar Bear|Legendary Egg
+Raptor|NA
+Reindeer|Christmas Egg, Christmas Harvest Event
+Sand Snake|NA
+Scarlet Macaw|Paradise Egg, Summer Update
+Sea Otter|Legendary Egg
+Seedling|Sprout Egg, Beanstalk Event
+Shroomie|Enchanted Chest, Fairy Event
+Silver Dragonfly|Season Pass, Premium Pass
+Silver Monkey|Legendary Egg
+Silver Piggy|крафт
+Snail|Bug Egg
+Snowman Builder|Season Pass 3 (ур. 25), Christmas Harvest Event
+Spider|Spooky Egg, Halloween Event
+Stag Beetle|Season Pass 2
+Stegosaurus|NA
+Stork|награды Evil Bunny
+Sushi Bear|NA
+Tanchozuru|NA
+Tanuki|NA
+Tarantula Hawk|Anti Bee Egg
+Tomb Marmot|Spooky Chest
+Trapdoor Spider|Smithing Event
+Triceratops|NA
+Turtle|Legendary Egg
+Wisp|Fairy Fares Shop
+Wolf|Creepy Critters Shop, Halloween Event
+Woody|NA
+Ankylosaurus|NA
+Apple Gazelle|NA
+Arctic Fox|Season Pass, Christmas Harvest Event
+Axolotl|NA
+Barn Owl|Fall Egg
+Bear Bee|Bee Egg, Bizzy Bee Event
+Black Cat|Spooky Egg, Halloween Event
+Brontosaurus|NA
+Brown Mouse|Mythical Egg
+Brown Owl|Bird Egg, Hungry Birds Event
+Butterfly|Anti Bee Egg
+Camel|NA
+Caterpillar|Bug Egg
+Chicken Zombie|NA
+Chimpanzee|Jungle Egg
+Cocoa Cat|подарки, Christmas Harvest Event
+Cooked Owl|NA
+Crocodile|Safari Shop, Mega Safari Harvest Event
+Dark Spriggan|Creepy Critters Shop, Halloween Event
+Dilophosaurus|NA
+Drake|NA
+Echo Frog|NA
+Eggnog Chick|подарки, Christmas Harvest Event
+Firefly|Season Pass
+Galah Cockatoo|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Giant Ant|Bug Egg
+Glimmering Sprite|Enchanted Egg, Fairy Event
+Goblin Gardener|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Goblin Miner|Smithing Event (остров раскопок)
+Golden Bee|NA
+Golden Piggy|крафт
+Golem|Sprout Egg, Beanstalk Event
+Hamster|NA
+Hazehound|Season Pass
+Hootsie Roll|Easter Event Shop
+Hyacinth Macaw|NA
+Kappa|NA
+Koi|NA
+Lemon Lion|NA
+Mantis Shrimp|Season Pass 2
+Mimic Octopus|Paradise Egg, Summer Merchant
+Mistletoad|Santa's Surprise Present
+Mochi Mouse|NA
+New Year's Chimp|New Year's Egg, New Year's Event
+Night Owl|NA
+Nutcracker|Christmas Egg, Christmas Harvest Event
+Owl|NA
+Pack Bee|Anti Bee Egg, Robux, задания
+Pack Mule|награды Trader (серия 8 и выше)
+Peach Wasp|NA
+Penguin|Santa's Stash
+Praying Mantis|Bug Egg
+Pterodactyl|NA
+Red Dragon|NA
+Red Giant Ant|Mythical Egg
+Rhino|Safari Egg, Safari Harvest Event
+Sapphire Macaw|Gem Egg
+Show Pony|Carnival Egg
+Spaghetti Sloth|NA
+Spriggan|NA
+Squirrel|Mythical Egg
+Sugar Glider|Fall Pet Shop, Fall Market Event
+Summer Kiwi|Santa's Stash
+Bearded Dragon|NA
+Blood Owl|NA
+Carnival Elephant|Carnival Egg
+Cerberus|Season Pass
+Chimera|слияние: Chimera Stone, Emerald Snake, Lion или Lemon Lion и Goat
+Chinchilla|Nutty Chest
+Cockatrice|Enchanted Egg, Fairy Event
+Diamond Panther|Gem Egg
+Disco Bee|Anti Bee Egg
+Dragonfly|Bug Egg
+Elephant|Safari Egg, Safari Harvest Event
+Fennec Fox|NA
+French Fry Ferret|NA
+Frost Dragon|Season Pass 3 (ур. 47)
+Golden Goose|NA
+Green Bean|NA
+Griffin|NA
+Hex Serpent|Grave Digger's Treasures, Halloween Event
+Hydra|Safari Harvest Event, Season Pass 2 (ур. 47)
+Krampus|Santa's Surprise Present
+Lich|Lich Crystal
+Lion|Safari Shop, Mega Safari Harvest Event
+Lobster Thermidor|NA
+Luminous Sprite|NA
+Mizuchi|Corrupted Zen Egg, Season Pass
+Mummy|Spooky Chest
+Orchid Mantis|награды Evil Bunny
+Phoenix|Enchanted Chest, Fairy Event
+Queen Bee|данные уточняются
+Raccoon|NA
+Raiju|NA
+Reaper|Creepy Critters Shop, Halloween Event
+Red Fox|Mythical Egg
+Red Panda|Fall Pet Shop, Fall Market Event
+Red Rose Fox|призы Valentine's Event
+Red-Nosed Reindeer|слияние 8 Reindeer 100 уровня с Sleigh
+Ruby Squid|Gem Egg
+Space Squirrel|Fall Pet Shop, Fall Market Event
+Spinosaurus|NA
+Star Wolf|New Year's Egg
+Swan|Fall Egg, Fall Market Event
+T-Rex|NA
+Tiger|Jungle Egg
+Water Buffalo|набор Robux в Roblox VN Shop
+Wind Wyvern|код за плюшевую игрушку Grow a Garden (PhatMojo)
+Yeti|Christmas Egg, Christmas Harvest Event
+Birb|Bird Egg
+Corrupted Kitsune|NA
+Gold Finch|Bird Egg
+Headless Horseman|Spooky Egg, Halloween Event
+Ice Golem|Christmas Egg, Christmas Harvest Event
+Kitsune|NA
+New Year's Dragon|New Year's Egg, Limited Time Shop`.split('\n').forEach(l => { const i = l.indexOf('|'); if (i > 0) INFO[l.slice(0,i)] = l.slice(i+1); });
+function openPet(name){
+  const p = ALL.find(x => x.name === name); if (!p) return;
+  const how = INFO[name];
+  const howText = how === 'NA' ? 'Сейчас недоступен: питомца можно получить только через трейд.' : (how || 'Данные уточняются.');
+  const own = state.inv[name] || 0;
+  $('petBody').innerHTML = `<div class="petart" style="--c:${HEX[p.key]}">${pawSVG(HEX[p.key])}</div>
+    <h3 style="font-size:20px">${esc(p.name)}</h3>
+    <span class="badge" style="--c:${HEX[p.key]}">${p.rarity}</span>
+    <div class="info"><b>Оценка в приложении</b>${fmt(p.price)} Petals</div>
+    <div class="info"><b>Как получить</b>${esc(howText)}</div>
+    <div class="info"><b>Что делает</b>${ABILITY[name] ? esc(ABILITY[name]) : '<span style="color:var(--muted)">Описание способности пока не добавлено.</span>'}</div>
+    ${own ? `<div class="info"><b>В вашей коллекции</b>×${own}</div>` : ''}
+    <p class="hint" style="margin-bottom:8px">Картинка условная: оригинальный арт питомцев принадлежит игре.</p>`;
+  $('petOv').classList.add('show');
+}
+$('list').addEventListener('click', e => { const b = e.target.closest('.qbtn'); if (b) openPet(b.dataset.n); });
+$('petOk').addEventListener('click', () => $('petOv').classList.remove('show'));
+
+/* ===== Админ-вкладка и подарки ===== */
+const tgUser = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+const myName = ((tgUser && tgUser.username) || '').toLowerCase();
+function initAdmin(){
+  if (!myName || myName !== ADMIN_USERNAME.toLowerCase()) return;
+  $('tabAdmin').style.display = '';
+  $('admSelfBtn').addEventListener('click', () => {
+    const n = parseInt($('admSelfAmt').value, 10);
+    if (!n || n < 1 || n > 100000){ toast('Введите число от 1 до 100 000'); return; }
+    state.petals += n; save(); updateBal(); $('admSelfAmt').value = ''; toast(`+${fmt(n)} Petals`);
+  });
+  $('admGiftBtn').addEventListener('click', () => {
+    const u = $('admUser').value.trim().replace(/^@/, ''), n = parseInt($('admAmt').value, 10);
+    if (!/^[A-Za-z0-9_]{5,32}$/.test(u)){ toast('Неверный юзернейм'); return; }
+    if (!n || n < 1 || n > 10000){ toast('Количество от 1 до 10 000'); return; }
+    if (!BOT_USERNAME){ toast('Укажите BOT_USERNAME в index.html'); return; }
+    const url = `https://t.me/${BOT_USERNAME}?start=give_${u}_${n}`;
+    try { tg.openTelegramLink(url); } catch(e){ window.open(url, '_blank'); }
+  });
+}
+function handleGift(){
+  try {
+    const q = new URLSearchParams(location.search);
+    const amt = parseInt(q.get('gift'), 10), gid = q.get('gid') || '', to = (q.get('to') || '').toLowerCase();
+    if (!amt || amt < 1 || amt > 100000 || !gid) return;
+    try { history.replaceState(null, '', location.pathname); } catch(e){}
+    if (!myName || myName !== to){ toast('Этот подарок предназначен другому игроку'); return; }
+    state.gifts = state.gifts || [];
+    if (state.gifts.includes(gid)){ toast('Этот подарок уже получен'); return; }
+    state.gifts.push(gid); state.petals += amt; save(); updateBal();
+    showResult('🎁 Подарок!', '<div style="font-size:64px;line-height:84px">🌸</div>', `+${fmt(amt)} Petals от администратора`);
+  } catch(e){}
+}
+
+updateBal(); updateTimer(); renderList(); renderTrade(); renderCollection(); initAdmin(); handleGift();
+</script>
+</body>
+</html>
