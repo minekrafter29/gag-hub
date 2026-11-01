@@ -1,0 +1,1451 @@
+{
+  "meta": {
+    "updated": "2026-10-30",
+    "note": "Описания пересказаны по сторонним сайтам, данные могут устареть или отличаться между источниками. confidence: high — совпадает в нескольких источниках, medium — один источник, low — один сомнительный источник, none — описание не найдено.",
+    "sources": {
+      "gamezebo": "https://www.gamezebo.com/walkthroughs/grow-a-garden-pets/",
+      "gurugamer": "https://gurugamer.com/mobile-games/ultimate-guide-to-all-pets-in-roblox-grow-a-garden-25707",
+      "sportskeeda": "https://www.sportskeeda.com/roblox-news/all-divine-pets-grow-garden",
+      "avergames": "https://avergames.com/games/grow-a-garden/pet-database/"
+    }
+  },
+  "abilities": {
+    "Tree Frog": {
+      "ability": "Примерно раз в 3 минуты ускоряет рост одного растения на 15 минут.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Rooster": {
+      "ability": "Сокращает время вылупления яиц на 20%.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Christmas Gorilla": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hummingbird": {
+      "ability": "Превращает одноразовые растения в семена.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Armadillo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Orangutan": {
+      "ability": "Небольшой шанс (около 3,5%) не потратить материалы при крафте.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Chubby Chipmunk": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Smithing Dog": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Sea Turtle": {
+      "ability": "Периодически даёт случайному питомцу 1000 опыта и иногда накладывает на плоды мутацию Wet.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Turtle Dove": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Wasp": {
+      "ability": "Опыляет плод раз в 30 минут и жалит питомца, сокращая его перезарядку на 60 секунд.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Woodpecker": {
+      "ability": "Клюёт древесные растения; даёт шанс удвоить древесный плод (ниже для редких плодов).",
+      "confidence": "medium",
+      "sources": [
+        "gurugamer"
+      ]
+    },
+    "Messenger Pigeon": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Snowman Soldier": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Badger": {
+      "ability": "Разбрасывает грязь; даёт шанс наложить на плоды мутацию Cracked.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Bone Dog": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Firemite": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Flamingo": {
+      "ability": "Каждые 4 минуты на короткое время сильно ускоряет рост растений рядом (по данным источников, в 15 раз).",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Hedgehog": {
+      "ability": "Увеличивает размер колючих плодов в 1,5 раза.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Seal": {
+      "ability": "Шанс (около 2,4%) получить питомца обратно в виде яйца при его продаже.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Goblin": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Pancake Mole": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Toucan": {
+      "ability": "Тропические растения рядом становятся крупнее и чаще получают мутации.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Zebra": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Easter Egg Chick": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Honey Bee": {
+      "ability": "Опыляет случайный плод примерно раз в 20 минут.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Orange Tabby": {
+      "ability": "Периодически дремлет; новые плоды рядом вырастают примерно в 1,5 раза крупнее.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Geode Turtle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Gift Rat": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Firework Sprite": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Ghost Bear": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Kiwi": {
+      "ability": "Каждую минуту сокращает самый долгий таймер яйца на 25 секунд.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Monkey": {
+      "ability": "Шанс вернуть семя при продаже плода (ниже для редких плодов).",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Pig": {
+      "ability": "Периодически удваивает шанс мутации у новых плодов рядом.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Cape Buffalo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Spotted Deer": {
+      "ability": "Даёт шанс (около 5%), что ягодное растение останется после сбора.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Partridge": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Pixie": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red Squirrel": {
+      "ability": "После использования способности сокращает следующую перезарядку у осенних питомцев.",
+      "confidence": "medium",
+      "sources": [
+        "gurugamer"
+      ]
+    },
+    "Nihonzaru": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Topaz Snail": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Tsuchinoko": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Performer Seal": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Wisp": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Turtle": {
+      "ability": "Увеличивает время работы спринклеров примерно на 20%.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Cow": {
+      "ability": "Растения рядом растут примерно в 1,12 раза быстрее.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Moth": {
+      "ability": "Каждые 13 минут полностью восполняет голод случайного питомца.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "German Shepherd": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Silver Dragonfly": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Tarantula Hawk": {
+      "ability": "Опыляет плод раз в 25 минут и жалит питомца, сокращая перезарядку примерно на 80 секунд.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Ash Raven": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Emerald Snake": {
+      "ability": "Превращает случайный плод в косметический предмет-самоцвет.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Cuckoo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Grey Mouse": {
+      "ability": "Каждые 10 минут даёт 500 опыта и +10% к скорости бега.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Capybara": {
+      "ability": "Питомцы рядом не теряют голод и получают опыт.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Pine Beetle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Magpie": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Seedling": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Football": {
+      "ability": "Забивает тачдаун и приносит Watering Can или Sheckles.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Sushi Bear": {
+      "ability": "Шанс мутаций Frozen/Chilled; бросает суши, чтобы восполнить голод питомца.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Trapdoor Spider": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Celebration Puppy": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Snowman Builder": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hippo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Marmot": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Stork": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Cheetah": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Pink Panda": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Peacock": {
+      "ability": "Ускоряет перезарядку способностей ближайших питомцев.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Amethyst Beetle": {
+      "ability": "Сражается с жуками других игроков за награду.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Polar Bear": {
+      "ability": "Иногда накладывает на плоды мутации Chilled или Frozen.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Snail": {
+      "ability": "Повышает шанс получить семена при сборе урожая.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Imp": {
+      "ability": "Периодически просит его догнать; поймав, вы получаете награду.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Wolf": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Blood Hedgehog": {
+      "ability": "Увеличивает колючие плоды и повышает шанс мутаций.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Giraffe": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Gummy Bear": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Ostrich": {
+      "ability": "Добавляет возраст питомцам, которые вылупились из яиц.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Silver Monkey": {
+      "ability": "Около 8% шанс вернуть семя при продаже плода.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Fortune Squirrel": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Tanchozuru": {
+      "ability": "Примерно раз в 10 минут медитирует и даёт растениям рядом около 5% шанс мутации Tranquil.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Moon Cat": {
+      "ability": "Плоды рядом становятся в 1,5 раза крупнее; 6% шанс заново посадить ночные семена.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Bear on Bike": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Tomb Marmot": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Mole": {
+      "ability": "Периодически копает и может найти Sheckles или снаряжение.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Silver Piggy": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Mallard": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Reindeer": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Sea Otter": {
+      "ability": "Периодически поливает ближайшее растение.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Marshmallow Lamb": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Scarlet Macaw": {
+      "ability": "Периодически (каждые 11–12 минут) с шансом около 16% накладывает на плод мутацию Verdant.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Calico": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Shroomie": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Champion Beetle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Petal Bee": {
+      "ability": "Опыляет случайный плод раз в 25 минут; около 1% шанс, что цветы останутся после сбора.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Idol Chipmunk": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Spider": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Stag Beetle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Iguana": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Meerkat": {
+      "ability": "Периодически сокращает перезарядку другого питомца примерно на 21 секунду.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Triceratops": {
+      "ability": "Периодически ускоряет рост нескольких растений.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Panda": {
+      "ability": "Повышает базовую ценность бамбука и автоматически его продаёт.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Gnome": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hotdog Daschund": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Gorilla Chef": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Blood Kiwi": {
+      "ability": "Каждую минуту сокращает самый долгий таймер яйца на 45 секунд и ускоряет вылупление на 20%.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Mandrake": {
+      "ability": "Около 3% шанс наложить мутацию Rot при сборе.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Tanuki": {
+      "ability": "Случайный эффект: мутации, кража плодов, опыт, Sheckles или сокращение перезарядки.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Bald Eagle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Corrupted Kodama": {
+      "ability": "Около 4% шанс, что Zen-растения получат мутацию Corrupt при сборе.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Parasaurolophus": {
+      "ability": "Периодически сокращает таймер яиц; иногда сокращает его сильнее.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Iguanodon": {
+      "ability": "Даёт больше опыта питомцам-динозаврам.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Sand Snake": {
+      "ability": "Небольшой шанс (около 1,5–3%) удвоить покупку семян и предметов.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Pachycephalosaurus": {
+      "ability": "Около 6,5% шанс удвоить созданный предмет при крафте.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Kodama": {
+      "ability": "Около 5% шанс, что Zen-растения получат мутацию Tranquil при сборе.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Raptor": {
+      "ability": "Около 2–2,5% шанс наложить мутацию Amber при сборе; увеличивает скорость бега.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Stegosaurus": {
+      "ability": "Шанс удвоить собранные плоды (около 8%), выше для доисторических растений.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Frog": {
+      "ability": "Раз в 20 минут ускоряет рост ближайшего растения на 24 часа.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Grizzly Bear": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Woody": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Golem": {
+      "ability": "Каждые 5 минут ускоряет Mutation Machine на 61 секунду.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Hootsie Roll": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Sapphire Macaw": {
+      "ability": "Шанс наложить на плод мутацию Crystalized.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Cocoa Cat": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Brown Mouse": {
+      "ability": "Каждые 8 минут даёт 750 опыта и +10% к высоте прыжка.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Sugar Glider": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Golden Piggy": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red Giant Ant": {
+      "ability": "Около 5% шанс удвоить собранный урожай.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Arctic Fox": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Glimmering Sprite": {
+      "ability": "Примерно раз в 3 минуты накладывает на случайный плод мутацию Glimmering.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Mimic Octopus": {
+      "ability": "Каждые 20 минут копирует способность одного из активных питомцев.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Brown Owl": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Koi": {
+      "ability": "Шанс, что яйцо появится снова после вылупления.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Mantis Shrimp": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Mistletoad": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Junkbot": {
+      "ability": "Автоматически собирает урожай и повышает цену продажи (один неподтверждённый источник).",
+      "confidence": "low",
+      "sources": [
+        "avergames"
+      ]
+    },
+    "Goblin Gardener": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Pterodactyl": {
+      "ability": "Накладывает мутацию Windstruck на несколько плодов; повышает высоту прыжка.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Ankylosaurus": {
+      "ability": "Около 16% шанс вернуть украденный с вашего участка урожай.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Echo Frog": {
+      "ability": "Раз в 15 минут ускоряет рост ближайшего растения на 24 часа.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Pack Mule": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hamster": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Mochi Mouse": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Pack Bee": {
+      "ability": "Добавляет 25 слотов в рюкзак.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Owl": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Show Pony": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Butterfly": {
+      "ability": "Заменяет мутации плода (5 и более) на Rainbow.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Crocodile": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Penguin": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Cooked Owl": {
+      "ability": "Около 15% шанс наложить мутацию Burnt каждые 15 минут.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Black Cat": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Eggnog Chick": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Praying Mantis": {
+      "ability": "Периодически повышает шанс мутаций у плодов рядом в 1,5 раза.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Chimpanzee": {
+      "ability": "Продаёт случайный плод, почти не промахиваясь.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Summer Kiwi": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Barn Owl": {
+      "ability": "Купленные питомцы могут получаться тяжелее; осенние питомцы быстрее получают опыт.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Squirrel": {
+      "ability": "Около 2,5% шанс не потратить семя при посадке.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Galah Cockatoo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Goblin Miner": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Nutcracker": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Peach Wasp": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hyacinth Macaw": {
+      "ability": "Около 15,6% шанс наложить мутацию Cloudtouched на плод.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Hazehound": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Giant Ant": {
+      "ability": "Около 10% шанс удвоить собранный урожай (ниже для редких плодов).",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Rhino": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Firefly": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red Dragon": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Bear Bee": {
+      "ability": "Раз в 25 минут накладывает на случайный плод мутацию HoneyGlazed.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Caterpillar": {
+      "ability": "Листовые растения рядом растут примерно в 1,5 раза быстрее.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Dark Spriggan": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "New Year's Chimp": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Spriggan": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Chicken Zombie": {
+      "ability": "Шанс наложить мутацию Zombified; +10% к скорости вылупления.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Drake": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Lemon Lion": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Golden Bee": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Night Owl": {
+      "ability": "Даёт всем активным питомцам дополнительный опыт (примерно 0,05–0,28 в секунду).",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Axolotl": {
+      "ability": "Около 6,8% шанс, что летний плод останется на грядке после сбора.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Brontosaurus": {
+      "ability": "Увеличивает размер и вес питомцев, вылупившихся из яиц.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Camel": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Kappa": {
+      "ability": "Каждые 8 секунд обрызгивает растения рядом (мутация Wet); небольшой шанс Bloodlit.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Apple Gazelle": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Spaghetti Sloth": {
+      "ability": "Периодически накладывает на плод мутацию Meatball, Pasta или Sauce.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Dilophosaurus": {
+      "ability": "Заражает питомцев ядом: сокращает перезарядку или даёт около 570 опыта.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Swan": {
+      "ability": "Копирует питомца с другого участка; периодически накладывает мутацию Graceful.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Lion": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Cockatrice": {
+      "ability": "Повышает шанс мутаций Silver и Gold, накладывает Toxic, ускоряет вылупление и даёт опыт.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Ruby Squid": {
+      "ability": "Копирует способность случайного питомца, у которого нет перезарядки.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Wind Wyvern": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Orchid Mantis": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Krampus": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Yeti": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Frost Dragon": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red-Nosed Reindeer": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Disco Bee": {
+      "ability": "Каждые 15–20 минут с шансом около 12–13% накладывает мутацию Disco.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Dragonfly": {
+      "ability": "Примерно раз в 5 минут накладывает мутацию Gold на случайный плод.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Elephant": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Hex Serpent": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Fennec Fox": {
+      "ability": "Копирует мутацию плода с другого участка и применяет к случайному плоду на вашем.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Hydra": {
+      "ability": "Повышает возраст питомцев, вылупляет яйцо и накладывает мутацию Terran.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Lich": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Carnival Elephant": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Chimera": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Blood Owl": {
+      "ability": "Даёт всем активным питомцам по 0,5 опыта в секунду.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Space Squirrel": {
+      "ability": "Каждые ~17 минут с шансом 15% накладывает мутацию Voidtouched на плоды рядом.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Star Wolf": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Tiger": {
+      "ability": "Собирает питомцев для общего опыта; меняет 3 мутации на другие 3.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Water Buffalo": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red Panda": {
+      "ability": "Пополняет в магазинах случайный предмет: снаряжение, питомца или семена.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Golden Goose": {
+      "ability": "Призывает растение Golden Egg с мутацией Fortune.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Cerberus": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Reaper": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Diamond Panther": {
+      "ability": "Шанс повзрослеть при сборе плода с 12 мутациями.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "French Fry Ferret": {
+      "ability": "Периодически повышает уровень случайного питомца на 1.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Mizuchi": {
+      "ability": "Распространяет мутацию Azure при продаже плодов.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Mummy": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Queen Bee": {
+      "ability": "Опыляет случайный плод раз в 20–25 минут и сбрасывает перезарядку питомца с самой долгой перезарядкой.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Red Fox": {
+      "ability": "Каждые 8 минут пытается скопировать семя с чужого участка; при успехе пробует снова.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Chinchilla": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Phoenix": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Red Rose Fox": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Raiju": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Green Bean": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Spinosaurus": {
+      "ability": "Каждые 19 минут съедает мутации у 3 плодов и переносит их на один плод.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Raccoon": {
+      "ability": "Раз в 15 минут копирует растение с чужого участка и добавляет к вашему.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "T-Rex": {
+      "ability": "Примерно раз в 20 минут съедает мутацию плода и передаёт её нескольким другим.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "sportskeeda"
+      ]
+    },
+    "Griffin": {
+      "ability": "Вызывает ураган, ускоряющий перезарядку питомцев; может наложить мутацию Cyclonic.",
+      "confidence": "medium",
+      "sources": [
+        "gamezebo"
+      ]
+    },
+    "Lobster Thermidor": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Luminous Sprite": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Bearded Dragon": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Gold Finch": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Headless Horseman": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Birb": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "New Year's Dragon": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Kitsune": {
+      "ability": "Примерно раз в 22 минуты накладывает мутацию Chakra на плод другого участка и дублирует его.",
+      "confidence": "high",
+      "sources": [
+        "gamezebo",
+        "gurugamer"
+      ]
+    },
+    "Ice Golem": {
+      "ability": null,
+      "confidence": "none",
+      "sources": []
+    },
+    "Corrupted Kitsune": {
+      "ability": "Случайно накладывает редкие мутации и повышает опыт (один неподтверждённый источник).",
+      "confidence": "low",
+      "sources": [
+        "avergames"
+      ]
+    }
+  }
+}
