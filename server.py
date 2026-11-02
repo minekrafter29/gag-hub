@@ -4,6 +4,7 @@ import datetime
 import hashlib
 import hmac
 import json
+import logging
 import random
 import re
 import sqlite3
@@ -17,6 +18,8 @@ BASE = Path(__file__).resolve().parent
 PETS = json.loads((BASE / "pets.json").read_text(encoding="utf-8"))
 ALL_NAMES = {p["name"]: k for k, v in PETS.items() for p in v}
 COOLDOWN = 24 * 3600
+STAR_RATE = 2          # 1 звезда Telegram = 2 Petals
+STARS_MAX = 2500       # максимум звёзд за одну покупку
 # t: p = Petals, pet = питомец; v — базовое значение (масштабируется по дню месяца), w — вес в %
 WHEEL = [("p", 10, 30), ("p", 25, 28), ("pet", "rare", 8), ("p", 50, 18),
          ("pet", "legendary", 3), ("p", 75, 8), ("p", 100, 4), ("pet", "mythical", 1)]
@@ -76,9 +79,10 @@ CREATE TABLE IF NOT EXISTS trade_log(id INTEGER PRIMARY KEY AUTOINCREMENT, a_uid
 CREATE TABLE IF NOT EXISTS reviews(tid INTEGER, from_uid INTEGER, to_uid INTEGER, up INTEGER, PRIMARY KEY(tid,from_uid));
 CREATE TABLE IF NOT EXISTS complaints(id INTEGER PRIMARY KEY AUTOINCREMENT, uid INTEGER, uname TEXT, target TEXT, text TEXT, created REAL);
 """)
+conn.execute("CREATE TABLE IF NOT EXISTS payments(charge_id TEXT PRIMARY KEY, uid INTEGER, stars INTEGER, petals INTEGER, created REAL, refunded INTEGER DEFAULT 0)")
 RATE = {}
 for _col in ("notified REAL DEFAULT 0", "referred INTEGER DEFAULT 0", "daily_at REAL DEFAULT 0",
-             "bonus_spins INTEGER DEFAULT 0", "ref_code TEXT", "banned INTEGER DEFAULT 0"):
+             "bonus_spins INTEGER DEFAULT 0", "ref_code TEXT", "banned INTEGER DEFAULT 0", "phone TEXT"):
     try:
         conn.execute("ALTER TABLE users ADD COLUMN " + _col)
     except sqlite3.OperationalError:
@@ -195,7 +199,7 @@ def state_of(uid: int) -> dict:
     return {"petals": r["petals"], "inv": json.loads(r["inv"]), "lastSpin": int(r["last_spin"] * 1000),
             "freeCases": r["free_cases"], "stats": json.loads(r["stats"] or "{}"),
             "dailyAt": int((r["daily_at"] or 0) * 1000),
-            "bonusSpins": r["bonus_spins"] or 0, "refCode": r["ref_code"], "referred": bool(r["referred"]),
+            "bonusSpins": r["bonus_spins"] or 0, "hasPhone": bool(r["phone"]), "refCode": r["ref_code"], "referred": bool(r["referred"]),
             "rep": conn.execute("SELECT COALESCE(SUM(up),0) c FROM reviews WHERE to_uid=?", (uid,)).fetchone()["c"]}
 
 
@@ -220,13 +224,73 @@ def rand_pet(rarity: str, pool=None) -> str:
 
 
 # ---- функции для бота ----
-def credit(username: str, petals: int = 0, free_cases: int = 0) -> bool:
-    r = conn.execute("SELECT id FROM users WHERE username=?", (username.lower().lstrip("@"),)).fetchone()
-    if not r:
+def norm_phone(raw: str) -> str:
+    d = re.sub(r"\D", "", str(raw or ""))
+    return d if 7 <= len(d) <= 15 else ""
+
+
+def find_user(key: str):
+    """+телефон, Telegram ID (только цифры) или @username → id игрока (или None)."""
+    key = str(key).strip().replace(" ", "")
+    if key.startswith("+"):
+        ph = norm_phone(key)
+        r = conn.execute("SELECT id FROM users WHERE phone=?", (ph,)).fetchone() if ph else None
+    elif key.isdigit():
+        r = conn.execute("SELECT id FROM users WHERE id=?", (int(key),)).fetchone()
+    else:
+        r = conn.execute("SELECT id FROM users WHERE username=?", (key.lower().lstrip("@"),)).fetchone()
+    return r["id"] if r else None
+
+
+def set_phone(uid: int, phone: str) -> bool:
+    ph = norm_phone(phone)
+    if not ph or not conn.execute("SELECT 1 FROM users WHERE id=?", (uid,)).fetchone():
         return False
-    conn.execute("UPDATE users SET petals=petals+?, free_cases=free_cases+? WHERE id=?", (petals, free_cases, r["id"]))
+    conn.execute("UPDATE users SET phone=NULL WHERE phone=? AND id!=?", (ph, uid))
+    conn.execute("UPDATE users SET phone=? WHERE id=?", (ph, uid))
     conn.commit()
     return True
+
+
+def credit(key: str, petals: int = 0, free_cases: int = 0):
+    """Начислить по @username, Telegram ID или +телефону. Возвращает id игрока или None."""
+    uid = find_user(key)
+    if not uid:
+        return None
+    conn.execute("UPDATE users SET petals=petals+?, free_cases=free_cases+? WHERE id=?", (petals, free_cases, uid))
+    conn.commit()
+    return uid
+
+
+def credit_payment(uid: int, payload: str, charge_id: str, stars: int):
+    """Зачисляет Petals за оплаченный счёт в Stars. Повторный вызов с тем же charge_id ничего не делает."""
+    try:
+        tag, pid, pstars = payload.split(":")
+        ok = tag == "petals" and int(pid) == uid and int(pstars) == stars and 1 <= stars <= STARS_MAX
+    except ValueError:
+        ok = False
+    if not ok:
+        return None
+    petals = stars * STAR_RATE
+    cur = conn.execute("INSERT OR IGNORE INTO payments(charge_id,uid,stars,petals,created) VALUES(?,?,?,?,?)",
+                       (charge_id, uid, stars, petals, time.time()))
+    if cur.rowcount == 0:
+        return 0
+    conn.execute("UPDATE users SET petals=petals+? WHERE id=?", (petals, uid))
+    bump(uid, stars_spent=stars)
+    conn.commit()
+    return petals
+
+
+def refund_payment(charge_id: str):
+    """Помечает платёж возвращённым и списывает Petals (не ниже 0). Возвращает строку платежа."""
+    p = conn.execute("SELECT * FROM payments WHERE charge_id=? AND refunded=0", (charge_id,)).fetchone()
+    if not p:
+        return None
+    conn.execute("UPDATE payments SET refunded=1 WHERE charge_id=?", (charge_id,))
+    conn.execute("UPDATE users SET petals=MAX(0, petals-?) WHERE id=?", (p["petals"], p["uid"]))
+    conn.commit()
+    return p
 
 
 def create_code(code: str, left: int, kind: str, amt: int) -> bool:
@@ -315,7 +379,7 @@ def verify(init_data: str, token: str):
         return None
 
 
-def make_app(token: str, admin_id: int, notify=None, notify_post=None, broadcast=None) -> web.Application:
+def make_app(token: str, admin_id: int, notify=None, notify_post=None, broadcast=None, invoice=None) -> web.Application:
     @web.middleware
     async def mw(request, handler):
         if request.method == "OPTIONS":
@@ -353,7 +417,7 @@ def make_app(token: str, admin_id: int, notify=None, notify_post=None, broadcast
 
     async def me(request):
         uid = request["user"]["id"]
-        return web.json_response({"state": state_of(uid), "cap": wheel_cap(), "theme": active_theme(), "themePick": theme_pick(), "promo": promo_info()})
+        return web.json_response({"state": state_of(uid), "cap": wheel_cap(), "theme": active_theme(), "themePick": theme_pick(), "promo": promo_info(), "starRate": STAR_RATE, "starsOn": bool(invoice)})
 
     async def spin(request):
         uid = request["user"]["id"]
@@ -740,14 +804,33 @@ def make_app(token: str, admin_id: int, notify=None, notify_post=None, broadcast
             "offers": conn.execute("SELECT COUNT(*) c FROM offers").fetchone()["c"],
             "requests": conn.execute("SELECT COUNT(*) c FROM requests WHERE status='open'").fetchone()["c"]})
 
+    async def buy(request):
+        if not invoice:
+            fail("Покупка за звёзды сейчас отключена")
+        uid = request["user"]["id"]
+        try:
+            stars = int((await request.json()).get("stars", 0))
+        except (TypeError, ValueError):
+            stars = 0
+        if not 1 <= stars <= STARS_MAX:
+            fail(f"Выберите от 1 до {STARS_MAX} звёзд")
+        try:
+            link = await invoice(uid, stars, stars * STAR_RATE)
+        except Exception as error:
+            logging.warning("Не удалось создать счёт: %s", error)
+            fail("Не удалось создать счёт, попробуйте позже")
+        return web.json_response({"link": link})
+
     async def admin_give(request):
         if not admin_id or request["user"]["id"] != admin_id:
             raise web.HTTPForbidden(text=json.dumps({"error": "Только для администратора"}))
         b = await request.json()
         n = int(b.get("amount", 0))
-        if not 1 <= n <= 100000 or not credit(str(b.get("username", "")), petals=n):
-            fail("Игрок не найден (он должен открыть приложение) или неверная сумма")
-        log_admin(f"Выдано {n} Petals игроку @{b.get('username')}")
+        who = str(b.get("username", "")).strip()
+        target = credit(who, petals=n) if 1 <= n <= 100000 else None
+        if not target:
+            fail("Игрок не найден или неверная сумма. Он должен открыть приложение; по номеру найдём только тех, кто привязал его в профиле")
+        log_admin(f"Выдано {n} Petals игроку {who} (id {target})")
         return web.json_response({"ok": True, "state": state_of(admin_id)})
 
     app = web.Application(middlewares=[mw])
@@ -761,5 +844,5 @@ def make_app(token: str, admin_id: int, notify=None, notify_post=None, broadcast
                     web.get("/api/admin/suspicious", admin_suspicious), web.post("/api/admin/promo", admin_promo),
                     web.post("/api/admin/schedule", admin_schedule), web.post("/api/request", pet_request), web.post("/api/post", trade_post), web.post("/api/admin/theme", admin_theme), web.post("/api/admin/themepick", admin_theme_pick), web.get("/api/admin/log", admin_log_view),
                     web.post("/api/remind", remind), web.get("/", index), web.get("/api/admin/stats", admin_stats),
-                    web.post("/api/admin/give", admin_give), web.options("/{p:.*}", lambda r: web.Response())])
+                    web.post("/api/admin/give", admin_give), web.post("/api/buy", buy), web.options("/{p:.*}", lambda r: web.Response())])
     return app

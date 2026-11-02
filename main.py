@@ -7,7 +7,8 @@ from pathlib import Path
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandObject, CommandStart
-from aiogram.types import BufferedInputFile, CallbackQuery, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup, Message, WebAppInfo
+from aiogram.types import (BufferedInputFile, CallbackQuery, ChatMemberUpdated, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
+                           LabeledPrice, Message, PreCheckoutQuery, ReplyKeyboardMarkup, ReplyKeyboardRemove, WebAppInfo)
 from aiohttp import web
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -32,6 +33,7 @@ ADMIN_ID = int(os.getenv("ADMIN_ID", "0") or 0)
 PORT = int(os.getenv("PORT", "8080"))
 TRADE_CHANNEL_ID = int(os.getenv("TRADE_CHANNEL_ID", "0") or 0)  # публичный канал обменов
 PENDING = {}  # user_id -> id публикации, на которую человек сейчас пишет предложение
+STARS_ENABLED = os.getenv("STARS_ENABLED", "1") != "0"  # STARS_ENABLED=0 в .env выключает покупку Petals за звёзды
 CHANNEL_ID = int(os.getenv("CHANNEL_ID", "0") or 0)  # канал для запросов (необязательно, иначе придёт вам в личку)
 
 if not TOKEN:
@@ -122,10 +124,16 @@ async def cmd_give(message: Message, command: CommandObject):
     if not is_admin(message):
         return
     p = (command.args or "").split()
-    if len(p) != 2 or not p[1].isdigit() or not server.credit(p[0], petals=int(p[1])):
-        await message.answer("Формат: /give @username 100. Игрок должен хотя бы раз открыть приложение.")
+    uid = server.credit(p[0], petals=int(p[1])) if len(p) == 2 and p[1].isdigit() else None
+    if not uid:
+        await message.answer("Формат: /give @username 100, /give 123456789 100 (Telegram ID) или /give +79991234567 100.\n"
+                             "Игрок должен хотя бы раз открыть приложение; по номеру находим тех, кто привязал его командой /phone.")
         return
     await message.answer("✅ Petals зачислены.")
+    try:
+        await bot.send_message(uid, f"🎁 Вам начислено {p[1]} Petals!", reply_markup=app_keyboard() if WEBAPP_URL.startswith("https://") else None)
+    except Exception:
+        pass
 
 
 @dp.message(Command("myid"))
@@ -213,6 +221,85 @@ async def on_request(cb: CallbackQuery):
         pass
 
 
+@dp.message(Command("phone"))
+async def cmd_phone(message: Message):
+    kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📱 Отправить мой номер", request_contact=True)]],
+                             resize_keyboard=True, one_time_keyboard=True)
+    await message.answer("Нажмите кнопку ниже: так админ сможет начислить вам Petals по номеру, даже если у вас нет @username.", reply_markup=kb)
+
+
+@dp.message(F.contact)
+async def on_contact(message: Message):
+    c = message.contact
+    if c.user_id != message.from_user.id:  # чужой контакт не принимаем
+        await message.answer("Отправьте именно свой номер кнопкой «Отправить мой номер».", reply_markup=ReplyKeyboardRemove())
+        return
+    server.touch(message.from_user.id, message.from_user.username)
+    ok = server.set_phone(message.from_user.id, c.phone_number)
+    await message.answer("✅ Номер привязан." if ok else "Не удалось сохранить номер.", reply_markup=ReplyKeyboardRemove())
+
+
+async def create_invoice(uid: int, stars: int, petals: int) -> str:
+    return await bot.create_invoice_link(
+        title="Petals для GAG Hub", description=f"{petals} Petals внутри приложения GAG Hub",
+        payload=f"petals:{uid}:{stars}", provider_token="", currency="XTR",
+        prices=[LabeledPrice(label=f"{petals} Petals", amount=stars)])
+
+
+@dp.pre_checkout_query()
+async def on_pre_checkout(q: PreCheckoutQuery):
+    try:
+        _, pid, pstars = q.invoice_payload.split(":")
+        ok = q.currency == "XTR" and int(pid) == q.from_user.id and int(pstars) == q.total_amount
+    except ValueError:
+        ok = False
+    await q.answer(ok=ok, error_message=None if ok else "Счёт недействителен, откройте покупку заново.")
+
+
+@dp.message(F.successful_payment)
+async def on_paid(message: Message):
+    sp = message.successful_payment
+    got = server.credit_payment(message.from_user.id, sp.invoice_payload, sp.telegram_payment_charge_id, sp.total_amount)
+    if got:
+        await message.answer(f"✅ Оплата получена: +{got} Petals. Спасибо!")
+        if ADMIN_ID:
+            try:
+                await bot.send_message(ADMIN_ID, f"⭐ {sp.total_amount} звёзд от {message.from_user.id}\nID платежа (для /refund): {sp.telegram_payment_charge_id}")
+            except Exception:
+                pass
+    elif got == 0:
+        pass  # повторное уведомление о том же платеже
+    else:
+        logging.error("Платёж не зачислен: %s", sp)
+        await message.answer("Оплата прошла, но зачислить Petals автоматически не удалось. Напишите администратору, мы всё исправим: /paysupport")
+
+
+@dp.message(Command("paysupport"))
+async def cmd_paysupport(message: Message):
+    await message.answer("Проблема с оплатой звёздами? Напишите администратору бота и приложите время платежа и ваш Telegram ID: "
+                         f"{message.from_user.id}. Возврат оформляется по запросу.")
+
+
+@dp.message(Command("refund"))
+async def cmd_refund(message: Message, command: CommandObject):
+    if not is_admin(message) or not command.args:
+        return
+    cid = command.args.strip()
+    p = server.refund_payment(cid)
+    if not p:
+        await message.answer("Платёж не найден или уже возвращён.")
+        return
+    try:
+        await bot.refund_star_payment(user_id=p["uid"], telegram_payment_charge_id=cid)
+    except Exception as error:
+        server.conn.execute("UPDATE payments SET refunded=0 WHERE charge_id=?", (cid,))
+        server.conn.execute("UPDATE users SET petals=petals+? WHERE id=?", (p["petals"], p["uid"]))
+        server.conn.commit()
+        await message.answer(f"Telegram отклонил возврат: {error}")
+        return
+    await message.answer(f"✅ Возвращено {p['stars']} звёзд, у игрока списано до {p['petals']} Petals.")
+
+
 @dp.message(F.text & ~F.text.startswith("/"))
 async def on_offer_text(message: Message):
     pid = PENDING.pop(message.from_user.id, None)
@@ -260,7 +347,7 @@ async def wheel_reminders():
 
 async def main():
     logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout), logging.FileHandler(BASE_DIR / "server.log", encoding="utf-8")])
-    runner = web.AppRunner(server.make_app(TOKEN, ADMIN_ID, notify_request, notify_post, do_broadcast))
+    runner = web.AppRunner(server.make_app(TOKEN, ADMIN_ID, notify_request, notify_post, do_broadcast, create_invoice if STARS_ENABLED else None))
     await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", PORT).start()
     print(f"API запущен на порту {PORT}. Бот GAG Hub запущен!")
